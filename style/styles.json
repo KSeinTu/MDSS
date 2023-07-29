@@ -6,7 +6,7 @@
     "fg_color": ["white", "white"]
   },
   "CTkFrame": {
-    "corner_radius": 6,
+    "corner_radius": 0,
     "border_width": 0,
     "fg_color": ["white", "white"],
     "top_fg_color": ["white", "white"],
@@ -28,7 +28,7 @@
     "anchor": "center"
   },
   "CTkEntry": {
-    "corner_radius": 6,
+    "corner_radius": 0,
     "border_width": 2,
     "fg_color": ["#F9F9FA", "#343638"],
     "border_color": ["#979DA2", "#565B5E"],
@@ -143,7 +143,7 @@
       "weight": "normal"
     },
     "Windows": {
-      "family": "Inter",
+      "family": "Lato",
       "size": 13,
       "weight": "normal"
     },
