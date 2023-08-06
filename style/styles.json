@@ -7,7 +7,7 @@
   },
   "CTkFrame": {
     "corner_radius": 0,
-    "border_width": 0,
+    "border_width": 1,
     "fg_color": ["white", "white"],
     "top_fg_color": ["white", "white"],
     "border_color": ["white", "white"]
