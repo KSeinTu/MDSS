@@ -23,6 +23,10 @@ class App(customtkinter.CTk): # Creating a class for the app
         #self.Question2Page = customtkinter.CTkFrame(self)
         self.geometry(f"{self.WIDTH}x{self.HEIGHT}") # setting the window size
 
+        ##----VARIABLES FOR STORING QUESTION LOGIC----#
+        self.current_question = "0" # Stores the string that indicates which question that the user is currently on ("0" refers to the welcome page)
+        
+
         ##----------WELCOME PAGE---------##
 
         #----GRID CONFIGURAIONS----
@@ -127,7 +131,8 @@ class App(customtkinter.CTk): # Creating a class for the app
         ##----------QUESTION 1 PAGE----------##
         print("changeToQuestion1")
         self.WelcomePage.pack_forget()
-        
+
+        self.current_question = "1" # Now moved onto the first question
 
         self.Question1Page = customtkinter.CTkFrame(self, fg_color="white", width=self.WIDTH, height=self.HEIGHT) # Creating frame to span the whole page
         self.Question1Page.grid_rowconfigure((0,1), weight=1)
@@ -212,11 +217,11 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.Question1Page.user_manual_button.pack(padx=5, pady=10)
 
         # Creating text labels in main body
-        self.Question1Page.question_title = customtkinter.CTkLabel(self.Question1Page.content_frame, text=self.get_question_text(1)[0], font=customtkinter.CTkFont(size=24, weight="bold"), text_color="#08343C", anchor="w")
+        self.Question1Page.question_title = customtkinter.CTkLabel(self.Question1Page.content_frame, text=self.get_question_text("1")[0], font=customtkinter.CTkFont(size=24, weight="bold"), text_color="#08343C", anchor="w")
         self.Question1Page.question_title.grid(row=0, column=0, columnspan=1, sticky="nsew", padx=20, pady=20)
-        self.Question1Page.question_desc = customtkinter.CTkLabel(self.Question1Page.content_frame, text=self.get_question_text(1)[1], font=customtkinter.CTkFont(size=16, weight="bold"), text_color="#08343C", anchor="w")
+        self.Question1Page.question_desc = customtkinter.CTkLabel(self.Question1Page.content_frame, text=self.get_question_text("1")[1], font=customtkinter.CTkFont(size=16, weight="bold"), text_color="#08343C", anchor="w")
         self.Question1Page.question_desc.grid(row=1, column=0, columnspan=1, sticky="nsew", padx=20, pady=20)
-        self.Question1Page.question_text = customtkinter.CTkLabel(self.Question1Page.content_frame, text=self.get_question_text(1)[2], font=customtkinter.CTkFont(size=16, weight="bold"), text_color="#08343C", anchor="w")
+        self.Question1Page.question_text = customtkinter.CTkLabel(self.Question1Page.content_frame, text=self.get_question_text("1")[2], font=customtkinter.CTkFont(size=16, weight="bold"), text_color="#08343C", anchor="w")
         self.Question1Page.question_text.grid(row=2, column=0, columnspan=1, sticky="nsew", padx=20, pady=20)
         self.Question1Page.option_frame = customtkinter.CTkFrame(self.Question1Page.content_frame, width=100, height=200)
         self.Question1Page.option_frame.grid(row=3, column=0, columnspan=1, sticky="nsew", padx=20, pady=20)
@@ -226,19 +231,8 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.Question1Page.prevnext_frame.grid_columnconfigure((1,2),weight=1)
         self.Question1Page.prevnext_frame.grid_rowconfigure(0,weight=1)
         
-        # Creating radio buttons
-        self.Question1Page.radio_option = customtkinter.IntVar(value=0) # Create a variable for storing the value of the radio button
-        self.Question1Page.option1_frame = customtkinter.CTkFrame(self.Question1Page.option_frame, fg_color="#08343C", border_color="#08343C", height=80, corner_radius=8)
-        #self.Question1Page.option1_frame.grid(row=0, column=0, padx=10, sticky="ew")
-        self.Question1Page.option1_frame.pack(pady=10, padx=30, anchor="w")
-        self.Question1Page.option1_radio = customtkinter.CTkRadioButton(master=self.Question1Page.option1_frame, variable=self.Question1Page.radio_option, value=1, font=customtkinter.CTkFont(size=16), text=self.get_question_options(1)[0], text_color="white", corner_radius=6)
-        self.Question1Page.option1_radio.grid(row=0, column=0, pady=10, padx=30, sticky="nsew")
-
-        self.Question1Page.option2_frame = customtkinter.CTkFrame(self.Question1Page.option_frame, fg_color="#08343C", border_color="#08343C", height=80, corner_radius=8)
-        #self.Question1Page.option2_frame.grid(row=1, column=0, padx=10, sticky="ew")
-        self.Question1Page.option2_frame.pack(pady=10, padx=30, anchor="w")
-        self.Question1Page.option2_radio = customtkinter.CTkRadioButton(master=self.Question1Page.option2_frame, variable=self.Question1Page.radio_option, value=2, font=customtkinter.CTkFont(size=16), text=self.get_question_options(1)[1], text_color="white", corner_radius=6)
-        self.Question1Page.option2_radio.grid(row=0, column=0, pady=10, padx=30, sticky="nsew")
+        # Generating the radio button options
+        self.generate_radio_buttons("1") # Generate the radio buttons for the first question
 
         # Creating Previous and next buttons at the bottom of the page
         self.Question1Page.prev_button = customtkinter.CTkButton(self.Question1Page.prevnext_frame, state="disabled", text='Previous', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40)
@@ -328,8 +322,12 @@ class App(customtkinter.CTk): # Creating a class for the app
                 topic_text = "<question_topic for Case 1>"
                 question_topic = "Building Materials"
                 question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
-            case _:
+            case _: # Create a case to catch all other possibilities, but entering this case indicates an error in the question logic (see flow diagram)
+                question_text = "<EXCEPTION REACHED>"
                 question_topic = "<EXCEPTION REACHED>"
+                topic_text = "<EXCEPTION REACHED>"
+                question_type = "<EXCEPTION REACHED>"
+
         return question_topic, topic_text, question_text, question_type
         
     def get_question_options(self, question_index): # Function to operate as a lookup table for options to provide to the user (option1, option2, ...)
@@ -404,7 +402,7 @@ class App(customtkinter.CTk): # Creating a class for the app
 
         match num_options: # Return the options based on whether or not they exist.
             case 2: # If the question has 2 selectable options
-                return num_options, question_option1, question_option2
+                return  num_options, question_option1, question_option2
             case 3: # If the question has 3 selectable options
                 return num_options, question_option1, question_option2, question_option3
             case 4: # If the question has 4 selectable options
@@ -412,13 +410,56 @@ class App(customtkinter.CTk): # Creating a class for the app
             case _: # exception case
                 print("<EXCEPTION REACHED>")
 
+    def generate_radio_buttons(self, question_index): # Function for dynamically generating the radio buttons that sit on the bottom of the question page
+        # Creating radio buttons
+        radio_options = self.get_question_options(question_index) # Get the options to put inside the radio buttons
+
+        self.Question1Page.radio_option = customtkinter.IntVar(value=0) # Create a variable for storing the value of the radio button
+        self.Question1Page.option1_frame = customtkinter.CTkFrame(self.Question1Page.option_frame, fg_color="#08343C", border_color="#08343C", height=80, corner_radius=8)
+        #self.Question1Page.option1_frame.grid(row=0, column=0, padx=10, sticky="ew")
+        self.Question1Page.option1_frame.pack(pady=10, padx=30, anchor="w")
+        self.Question1Page.option1_radio = customtkinter.CTkRadioButton(master=self.Question1Page.option1_frame, variable=self.Question1Page.radio_option, value=1, font=customtkinter.CTkFont(size=16), text=radio_options[1], text_color="white", corner_radius=6)
+        self.Question1Page.option1_radio.grid(row=0, column=0, pady=10, padx=30, sticky="nsew")
+
+        self.Question1Page.option2_frame = customtkinter.CTkFrame(self.Question1Page.option_frame, fg_color="#08343C", border_color="#08343C", height=80, corner_radius=8)
+        #self.Question1Page.option2_frame.grid(row=1, column=0, padx=10, sticky="ew")
+        self.Question1Page.option2_frame.pack(pady=10, padx=30, anchor="w")
+        self.Question1Page.option2_radio = customtkinter.CTkRadioButton(master=self.Question1Page.option2_frame, variable=self.Question1Page.radio_option, value=2, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[2], text_color="white", corner_radius=6)
+        self.Question1Page.option2_radio.grid(row=0, column=0, pady=10, padx=30, sticky="nsew")
+
+        # Buttons 3 and 4 do not always appear, appearance is based on the number of options that the question has available
+        match radio_options[0]:
+            case 3: # the number of options that the question has is the last element in the returned array
+                self.Question1Page.option3_frame = customtkinter.CTkFrame(self.Question1Page.option_frame, fg_color="#08343C", border_color="#08343C", height=80, corner_radius=8)
+                #self.Question1Page.option3_frame.grid(row=0, column=0, padx=10, sticky="ew")
+                self.Question1Page.option3_frame.pack(pady=10, padx=30, anchor="w")
+                self.Question1Page.option3_radio = customtkinter.CTkRadioButton(master=self.Question1Page.option3_frame, variable=self.Question1Page.radio_option, value=1, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[3], text_color="white", corner_radius=6)
+                self.Question1Page.option3_radio.grid(row=0, column=0, pady=10, padx=30, sticky="nsew")
+            case 4:
+                self.Question1Page.option4_frame = customtkinter.CTkFrame(self.Question1Page.option_frame, fg_color="#08343C", border_color="#08343C", height=80, corner_radius=8)
+                #self.Question1Page.option4_frame.grid(row=1, column=0, padx=10, sticky="ew")
+                self.Question1Page.option4_frame.pack(pady=10, padx=30, anchor="w")
+                self.Question1Page.option4_radio = customtkinter.CTkRadioButton(master=self.Question1Page.option3_frame, variable=self.Question1Page.radio_option, value=2, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[4], text_color="white", corner_radius=6)
+                self.Question1Page.option4_radio.grid(row=0, column=0, pady=10, padx=30, sticky="nsew")
+
     def new_project_button_event(self):
         self.changeToQuestion1()
 
     def user_manual_button_event(self):
         print("test")
 
-    def changeQuestion(self, question_index):
+    def changeQuestion(self, question_index, direction): # Method used to switch between questions in the software
+        # Direction takes values -1 or 1: -1 is to go to the previous question, +1 is to go to the next question
+        # The next question that is selected is based on the flow of the decision tree, as documented in the flow chart
+
+        # By this stage we should have already validated whether the user is able to go back to a previous question or go to the next one
+        if direction == 1: # Going to the next question
+            print("Going to next question")
+            next_question_index = get_next_question_index(self.Question1Page.radio_option)
+
+        elif direction == -1: # Going to the previous question
+            print("Going to previous question")
+
         # Changes to the text associated with the question
         print("changeQuestion")
         self.question_arr = self.get_question_text(question_index) # gets the text associated with each of the questions
@@ -426,9 +467,66 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.Question1Page.question_desc.configure(text=self.question_arr[1])
         self.Question1Page.question_text.configure(text=self.question_arr[2])
         # Changes the options associated with the question
+        self.generate_radio_buttons(question_index)
+
+        self.current_question += 1  # Iterate the current question number
     
-    #def questionLogic(self) # Method takes the value of the current question and the value of the radio button to know which question should come next
-        
+    def get_next_question_index(self, radio_button_value, question_index): # Method takes the value of the current question and the value of the radio button to know which question should come next
+        # Note that the value of the radio button has a different meaning depending on the question that it is coupled with
+        # In general, 0 is the no option selected, 1 is the first option selected, 2 is the second option selected, etc.
+        match question_index: #Switch case statement to get the text for each of the options within the question
+            case "1": # Each case is one of the questions in the decision tree                    
+                next_question_index = "2" # All responses to this question lead to the same result
+            case "2":
+                match radio_button_value: # Use the value of the radio button to determine which question the program is supposed to go to next
+                    case 0: # No radio button option has been selected
+                        next_question_index = "-1" # value of -1 is returned to indicate that the user cannot proceed to the next question yet!
+                    case 1:
+                        next_question_index = "4"
+                    case 2:
+                        next_question_index = "3a"
+            case "3a": 
+                match radio_button_value: 
+                    case 0: 
+                        next_question_index = "-1" 
+                    case 1:
+                        next_question_index = "5a"
+                    case 2:
+                        next_question_index = "3b"
+            case "3b": 
+                match radio_button_value: 
+                    case 0: 
+                        next_question_index = "-1"
+                    case 1:
+                        next_question_index = "5a"
+                    case 2:
+                        next_question_index = "5b"
+            case "4": 
+                next_question_index = "7"
+            case "5a": 
+                next_question_index = "6"
+            case "5b": 
+                next_question_index = "6"
+            case "6": 
+                next_question_index = "8"
+            case "7": 
+                next_question_index = "9a"
+            case "8": 
+                next_question_index = "9a"
+            case "9a": 
+                next_question_index = "9b"
+            case "9b": 
+                next_question_index = "9c"
+            case "9c":
+                next_question_index = "9d"
+            case "9d": 
+                next_question_index = "9e"
+            case "9e": 
+                # Results case
+                next_question_index = ""
+            case _:
+                next_question_index = "<EXCEPTION REACHED>"
+        return next_question_index
 
 if __name__ == "__main__":
     app = App()
