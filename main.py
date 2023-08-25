@@ -25,7 +25,7 @@ class App(customtkinter.CTk): # Creating a class for the app
 
         ##----VARIABLES FOR STORING QUESTION LOGIC----#
         self.current_question = "0" # Stores the string that indicates which question that the user is currently on ("0" refers to the welcome page)
-        
+        self.prev_question = "0"
 
         ##----------WELCOME PAGE---------##
 
@@ -111,18 +111,18 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.WelcomePage.guidance_label.pack()
 
         # Creating buttons
-        self.WelcomePage.load_button_top = customtkinter.CTkButton(self.WelcomePage.buttonbar_frame1, command=self.load_project_button_event, text='Load Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40)
+        self.WelcomePage.load_button_top = customtkinter.CTkButton(self.WelcomePage.buttonbar_frame1, command=self.load_project_button_event, text='Load Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.WelcomePage.load_button_top.pack(padx=10, pady=10)
-        self.WelcomePage.new_project_button_top = customtkinter.CTkButton(self.WelcomePage.buttonbar_frame2, command=self.changeToQuestion1, text='New Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40)
+        self.WelcomePage.new_project_button_top = customtkinter.CTkButton(self.WelcomePage.buttonbar_frame2, command=self.changeToQuestion1, text='New Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.WelcomePage.new_project_button_top.pack(padx=10, pady=10)
-        self.WelcomePage.user_manual_button_top = customtkinter.CTkButton(self.WelcomePage.buttonbar_frame3, command=self.user_manual_button_event, text='User Manual', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40)
+        self.WelcomePage.user_manual_button_top = customtkinter.CTkButton(self.WelcomePage.buttonbar_frame3, command=self.user_manual_button_event, text='User Manual', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.WelcomePage.user_manual_button_top.pack(padx=10, pady=10)
 
-        self.WelcomePage.load_button_mid = customtkinter.CTkButton(self.WelcomePage.content_frame31, command=self.load_project_button_event, text='Load Project', fg_color="#048B6B", font=customtkinter.CTkFont(size=14, weight="bold"), height=40)
+        self.WelcomePage.load_button_mid = customtkinter.CTkButton(self.WelcomePage.content_frame31, command=self.load_project_button_event, text='Load Project', fg_color="#048B6B", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.WelcomePage.load_button_mid.pack()
-        self.WelcomePage.new_project_button_mid = customtkinter.CTkButton(self.WelcomePage.content_frame32, command=self.changeToQuestion1, text='New Project', fg_color="#048B6B", font=customtkinter.CTkFont(size=14, weight="bold"), height=40)
+        self.WelcomePage.new_project_button_mid = customtkinter.CTkButton(self.WelcomePage.content_frame32, command=self.changeToQuestion1, text='New Project', fg_color="#048B6B", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.WelcomePage.new_project_button_mid.pack()
-        self.WelcomePage.user_manual_button_mid = customtkinter.CTkButton(self.WelcomePage.content_frame33, command=self.user_manual_button_event, text='User Manual', fg_color="#048B6B", font=customtkinter.CTkFont(size=14, weight="bold"), height=40)
+        self.WelcomePage.user_manual_button_mid = customtkinter.CTkButton(self.WelcomePage.content_frame33, command=self.user_manual_button_event, text='User Manual', fg_color="#048B6B", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.WelcomePage.user_manual_button_mid.pack()
 
         #-----------------------------------------------------------------#
@@ -172,33 +172,36 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.Question1Page.buttonbar_frame5.grid(row=1,column=5, columnspan=1, sticky="nesw") 
 
         # Creating a frame for the sidebar
-        self.Question1Page.sidebar_frame = customtkinter.CTkFrame(self.Question1Page, fg_color="#048B6B", width=50)
-        self.Question1Page.sidebar_frame.grid(row=2, column=0, rowspan=4, sticky="nsew")
-        self.Question1Page.sidebar_frame.grid_rowconfigure((0,1,2,3,4,5,6,7), weight=1)
-        self.Question1Page.sidebar_frame.grid_columnconfigure(0, weight=1)
+        # self.Question1Page.sidebar_frame = customtkinter.CTkFrame(self.Question1Page, fg_color="#048B6B", width=50)
+        # self.Question1Page.sidebar_frame.grid(row=2, column=0, rowspan=4, sticky="nsew")
+        # self.Question1Page.sidebar_frame.grid_rowconfigure((0,1,2,3,4,5,6,7), weight=1)
+        # self.Question1Page.sidebar_frame.grid_rowconfigure(8, weight=3)
+        # self.Question1Page.sidebar_frame.grid_columnconfigure(0, weight=1)
 
         # Title on the sidebar
-        self.Question1Page.sidebar_title = customtkinter.CTkLabel(self.Question1Page.sidebar_frame, text="Chapter Select", text_color="#08343C", font=customtkinter.CTkFont(size=20, weight="bold", underline=True))
-        self.Question1Page.sidebar_title.grid(row=0, column=0, sticky="nesw")
+        # self.Question1Page.sidebar_title = customtkinter.CTkLabel(self.Question1Page.sidebar_frame, text="Chapter Select", text_color="#08343C", font=customtkinter.CTkFont(size=20, weight="bold", underline=True))
+        # self.Question1Page.sidebar_title.grid(row=0, column=0, sticky="nesw")
 
         # Buttons on the Sidebar
-        self.Question1Page.chapter1_button = customtkinter.CTkButton(self.Question1Page.sidebar_frame, state="disabled", text='Accuracy Req.', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40)
-        self.Question1Page.chapter1_button.grid(row=1, column=0, sticky="ew", padx=30, pady=30)
-        self.Question1Page.chapter2_button = customtkinter.CTkButton(self.Question1Page.sidebar_frame, state="enabled", text='Existing WLAN', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40)
-        self.Question1Page.chapter2_button.grid(row=2, column=0, sticky="ew", padx=30, pady=30)
-        self.Question1Page.chapter3_button = customtkinter.CTkButton(self.Question1Page.sidebar_frame, state="enabled", text='Budget', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40)
-        self.Question1Page.chapter3_button.grid(row=3, column=0, sticky="ew", padx=30, pady=30) # This button is only enabled for the existing facility option
-        self.Question1Page.chapter4_button = customtkinter.CTkButton(self.Question1Page.sidebar_frame, state="enabled", text='Existing Cabling', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40)
-        self.Question1Page.chapter4_button.grid(row=4, column=0, sticky="ew", padx=30, pady=30)
-        self.Question1Page.chapter5_button = customtkinter.CTkButton(self.Question1Page.sidebar_frame, state="enabled", text='Handsets', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40)
-        self.Question1Page.chapter5_button.grid(row=5, column=0, sticky="ew", padx=30, pady=30)
-        self.Question1Page.chapter6_button = customtkinter.CTkButton(self.Question1Page.sidebar_frame, state="enabled", text='Materials', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40)
-        self.Question1Page.chapter6_button.grid(row=6, column=0, sticky="ew", padx=30, pady=30)
+        # self.Question1Page.chapter1_button = customtkinter.CTkButton(self.Question1Page.sidebar_frame, text='Accuracy Req.', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        # self.Question1Page.chapter1_button.grid(row=1, column=0, sticky="ew", padx=30, pady=30)
+        # self.Question1Page.chapter1_button.configure(state="disabled") # When on question 1 the chapter 1 button is disabled
+        # self.Question1Page.chapter2_button = customtkinter.CTkButton(self.Question1Page.sidebar_frame, text='Existing WLAN', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        # self.Question1Page.chapter2_button.grid(row=2, column=0, sticky="ew", padx=30, pady=30)
+        # self.Question1Page.chapter3_button = customtkinter.CTkButton(self.Question1Page.sidebar_frame, text='Budget', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        # self.Question1Page.chapter3_button.grid(row=3, column=0, sticky="ew", padx=30, pady=30) # This button is only enabled for the existing facility option
+        # self.Question1Page.chapter4_button = customtkinter.CTkButton(self.Question1Page.sidebar_frame, text='Existing Cabling', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        # self.Question1Page.chapter4_button.grid(row=4, column=0, sticky="ew", padx=30, pady=30)
+        # self.Question1Page.chapter5_button = customtkinter.CTkButton(self.Question1Page.sidebar_frame, text='Handsets', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        # self.Question1Page.chapter5_button.grid(row=5, column=0, sticky="ew", padx=30, pady=30)
+        # self.Question1Page.chapter6_button = customtkinter.CTkButton(self.Question1Page.sidebar_frame, text='Materials', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        # self.Question1Page.chapter6_button.grid(row=6, column=0, sticky="ew", padx=30, pady=30)
+        # self.Question1Page.chapterResults_button = customtkinter.CTkButton(self.Question1Page.sidebar_frame, state="enabled", text='Results', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        # self.Question1Page.chapterResults_button.grid(row=6, column=0, sticky="ew", padx=30, pady=30)
         
 
         # Creating a frame to hold all of the content frames in the white space
         self.content_height=self.HEIGHT-self.Question1Page.buttonbar_frame.cget("height")-self.Question1Page.logo_frame.cget("height")-100
-        print(self.content_height)
         self.Question1Page.content_frame = customtkinter.CTkFrame(self.Question1Page, fg_color="white", width=self.WIDTH, height=self.content_height) 
         self.Question1Page.content_frame.grid(row=2, column=1, rowspan=4, columnspan=4, sticky="nsew", padx=20, pady=10)
         self.Question1Page.content_frame.grid_rowconfigure(0, weight=2)
@@ -207,13 +210,13 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.Question1Page.content_frame.grid_columnconfigure(0, weight=2)
 
         # Creating buttons
-        self.Question1Page.save_project_button = customtkinter.CTkButton(self.Question1Page.buttonbar_frame1, command=self.user_manual_button_event, text='Save Current Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40)
+        self.Question1Page.save_project_button = customtkinter.CTkButton(self.Question1Page.buttonbar_frame1, command=self.user_manual_button_event, text='Save Current Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.Question1Page.save_project_button.pack(padx=5, pady=10)
-        self.Question1Page.load_button = customtkinter.CTkButton(self.Question1Page.buttonbar_frame2, command=self.load_project_button_event, text='Load Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40)
+        self.Question1Page.load_button = customtkinter.CTkButton(self.Question1Page.buttonbar_frame2, command=self.load_project_button_event, text='Load Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.Question1Page.load_button.pack(padx=5, pady=10)
-        self.Question1Page.new_project_button = customtkinter.CTkButton(self.Question1Page.buttonbar_frame3, command=self.changeToQuestion1, text='New Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40)
+        self.Question1Page.new_project_button = customtkinter.CTkButton(self.Question1Page.buttonbar_frame3, command=self.changeToQuestion1, text='New Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.Question1Page.new_project_button.pack(padx=5, pady=10)
-        self.Question1Page.user_manual_button = customtkinter.CTkButton(self.Question1Page.buttonbar_frame4, command=self.user_manual_button_event, text='User Manual', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40)
+        self.Question1Page.user_manual_button = customtkinter.CTkButton(self.Question1Page.buttonbar_frame4, command=self.user_manual_button_event, text='User Manual', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.Question1Page.user_manual_button.pack(padx=5, pady=10)
 
         # Creating text labels in main body
@@ -235,12 +238,127 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.generate_radio_buttons("1") # Generate the radio buttons for the first question
 
         # Creating Previous and next buttons at the bottom of the page
-        self.Question1Page.prev_button = customtkinter.CTkButton(self.Question1Page.prevnext_frame, state="disabled", text='Previous', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40)
+        self.Question1Page.prev_button = customtkinter.CTkButton(self.Question1Page.prevnext_frame, command=self.callback_prev_button, text='Previous', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.Question1Page.prev_button.grid(row=0, column=1)
-        self.Question1Page.next_button = customtkinter.CTkButton(self.Question1Page.prevnext_frame, command=self.changeQuestion, text='Next', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40)
+        self.Question1Page.prev_button.configure(state="disabled") # Disable the previous question button since we are on the first question
+        self.Question1Page.next_button = customtkinter.CTkButton(self.Question1Page.prevnext_frame, command=self.callback_next_button, text='Next', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.Question1Page.next_button.grid(row=0, column=2)
+        self.Question1Page.next_button.configure(state="disabled") # Can't go to the next question until we put in a radio option
 
         self.Question1Page.pack(fill=customtkinter.BOTH)
+
+# Set of callback functions to abstract the execution of commands that are done when different buttons in the program are clicked
+    def cond_next_button(self):
+        # If we are not on the last question and we have selected a radio option
+        print(self.current_question, self.Question1Page.radio_option.get())
+        print(self.current_question != "9e" and self.Question1Page.radio_option.get()!=0)
+        return (self.current_question != "9e" and self.Question1Page.radio_option.get()!=0)
+    def cond_prev_button(self):
+        return (self.current_question != "1")
+
+    def callback_next_button(self):
+        # Change the current question we are on
+        self.changeQuestion(self.current_question, 1)
+        # Enable/disable the next button depending on which question we end up on
+        if self.cond_next_button(): # If we satisfy the conditions to go to the next question
+            self.Question1Page.next_button.configure(state="enabled")
+        else:
+            self.Question1Page.next_button.configure(state="disabled")
+        if self.cond_prev_button(): # If we satisfy the conditions to go back to the previous question
+            self.Question1Page.prev_button.configure(state="enabled")
+        else:
+            self.Question1Page.prev_button.configure(state="disabled")
+
+    def callback_prev_button(self):
+        self.changeQuestion(self.current_question, -1)
+        # Enable/disable the next button depending on which question we end up on
+        if self.cond_next_button: # If we satisfy the conditions to go to the next question
+            self.Question1Page.next_button.configure(state="disabled")
+        else:
+            self.Question1Page.next_button.configure(state="enabled")
+        if self.cond_prev_button: # # If we satisfy the conditions to go back to the previous question
+            self.Question1Page.prev_button.configure(state="disabled")
+        else: 
+            self.Question1Page.prev_button.configure(state="enabled")
+    
+    def radio_option1_callback(self):
+        print("Selected option",self.Question1Page.radio_option.get())
+        # Code to change the colour framing
+        self.Question1Page.option1_frame.configure(fg_color="#a9c855")
+        self.Question1Page.option1_radio.configure(text_color="#08343C")
+        # Change the colours of the other radio buttons back
+        num_options = self.get_question_options(self.current_question)[0] # Get how many options there are for the current question
+        if num_options >=2:
+            self.Question1Page.option2_frame.configure(fg_color="#08343C")
+            self.Question1Page.option2_radio.configure(text_color="white")
+        if num_options >=3:
+            self.Question1Page.option3_frame.configure(fg_color="#08343C")
+            self.Question1Page.option3_radio.configure(text_color="white")
+        if num_options >=4:
+            self.Question1Page.option4_frame.configure(fg_color="#08343C")
+            self.Question1Page.option4_radio.configure(text_color="white")
+        if self.cond_next_button(): # # If we satisfy the conditions to go back to the next question
+            self.Question1Page.next_button.configure(state="enabled")
+        else:
+            self.Question1Page.next_button.configure(state="disabled")
+    
+    def radio_option2_callback(self):
+        print("Selected option",self.Question1Page.radio_option.get())
+        # Code to change the colour framing
+        self.Question1Page.option2_frame.configure(fg_color="#a9c855")
+        self.Question1Page.option2_radio.configure(text_color="#08343C")
+        # Change the colours of the other radio buttons back
+        num_options = self.get_question_options(self.current_question)[0] # Get how many options there are for the current question
+        if num_options >=2:
+            self.Question1Page.option1_frame.configure(fg_color="#08343C")
+            self.Question1Page.option1_radio.configure(text_color="white")
+        if num_options >=3:
+            self.Question1Page.option3_frame.configure(fg_color="#08343C")
+            self.Question1Page.option3_radio.configure(text_color="white")
+        if num_options >=4:
+            self.Question1Page.option4_frame.configure(fg_color="#08343C")
+            self.Question1Page.option4_radio.configure(text_color="white")
+        if self.cond_next_button(): # # If we satisfy the conditions to go back to the next question
+            self.Question1Page.next_button.configure(state="enabled")
+        else:
+            self.Question1Page.next_button.configure(state="disabled")
+
+    def radio_option3_callback(self):
+        print("Selected option",self.Question1Page.radio_option.get())
+        # Code to change the colour framing
+        self.Question1Page.option3_frame.configure(fg_color="#a9c855")
+        self.Question1Page.option3_radio.configure(text_color="#08343C")
+        # Change the colours of the other radio buttons back
+        num_options = self.get_question_options(self.current_question)[0] # Get how many options there are for the current question
+        if num_options >=3:
+            self.Question1Page.option1_frame.configure(fg_color="#08343C")
+            self.Question1Page.option1_radio.configure(text_color="white")
+            self.Question1Page.option2_frame.configure(fg_color="#08343C")
+            self.Question1Page.option2_radio.configure(text_color="white")
+        if num_options >=4:
+            self.Question1Page.option4_frame.configure(fg_color="#08343C")
+            self.Question1Page.option4_radio.configure(text_color="white")
+        if self.cond_next_button(): # # If we satisfy the conditions to go back to the next question
+            self.Question1Page.next_button.configure(state="enabled")
+        else:
+            self.Question1Page.next_button.configure(state="disabled")
+    
+    def radio_option4_callback(self):
+        print("Selected option",self.Question1Page.radio_option.get())
+        # Code to change the colour framing
+        self.Question1Page.option4_frame.configure(fg_color="#a9c855")
+        self.Question1Page.option4_radio.configure(text_color="#08343C")
+        # Change the colours of the other buttons back
+        self.Question1Page.option_frame.configure(fg_color="#08343C")
+        self.Question1Page.option1_radio.configure(text_color="white")
+        self.Question1Page.option2_frame.configure(fg_color="#08343C")
+        self.Question1Page.option2_radio.configure(text_color="white")
+        self.Question1Page.option3_frame.configure(fg_color="#08343C")
+        self.Question1Page.option3_radio.configure(text_color="white")
+        if self.cond_next_button(): # # If we satisfy the conditions to go back to the next question
+            self.Question1Page.next_button.configure(state="enabled")
+        else:
+            self.Question1Page.next_button.configure(state="disabled")
 
     def load_project_button_event(self):
         print("test")
@@ -411,6 +529,21 @@ class App(customtkinter.CTk): # Creating a class for the app
                 print("<EXCEPTION REACHED>")
 
     def generate_radio_buttons(self, question_index): # Function for dynamically generating the radio buttons that sit on the bottom of the question page
+        # Check if this is the first function call
+        print("Current_question:" + self.current_question)
+        if (self.current_question != "1" or (self.current_question == "1" and self.prev_question == "2")):
+            # If we are not on the first question, or we are going from the second question to the first question
+            # The option frames will already exist in all of these cases, since the options are first generated when going from the welcome page to question 1
+            self.Question1Page.option1_frame.destroy()
+            self.Question1Page.option2_frame.destroy()
+            # The above is only assuming that the first question has 2 options, pack_forget() on more options must be added if this changes.
+            prev_num_options = self.get_question_options(self.prev_question)[0] # get the number of multi choice options there were for the previous question
+            if prev_num_options == 3: # If there were 3 options, unpack the 3rd option as well
+                self.Question1Page.option3_frame.destroy()
+            if prev_num_options == 4: # If there were 4 options, unpack the 3rd and 4th options as well
+                self.Question1Page.option3_frame.destroy()
+                self.Question1Page.option4_frame.destroy()
+        
         # Creating radio buttons
         radio_options = self.get_question_options(question_index) # Get the options to put inside the radio buttons
 
@@ -418,13 +551,13 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.Question1Page.option1_frame = customtkinter.CTkFrame(self.Question1Page.option_frame, fg_color="#08343C", border_color="#08343C", height=80, corner_radius=8)
         #self.Question1Page.option1_frame.grid(row=0, column=0, padx=10, sticky="ew")
         self.Question1Page.option1_frame.pack(pady=10, padx=30, anchor="w")
-        self.Question1Page.option1_radio = customtkinter.CTkRadioButton(master=self.Question1Page.option1_frame, variable=self.Question1Page.radio_option, value=1, font=customtkinter.CTkFont(size=16), text=radio_options[1], text_color="white", corner_radius=6)
+        self.Question1Page.option1_radio = customtkinter.CTkRadioButton(master=self.Question1Page.option1_frame, command=self.radio_option1_callback, variable=self.Question1Page.radio_option, value=1, font=customtkinter.CTkFont(size=16), text=radio_options[1], text_color="white", corner_radius=6)
         self.Question1Page.option1_radio.grid(row=0, column=0, pady=10, padx=30, sticky="nsew")
 
         self.Question1Page.option2_frame = customtkinter.CTkFrame(self.Question1Page.option_frame, fg_color="#08343C", border_color="#08343C", height=80, corner_radius=8)
         #self.Question1Page.option2_frame.grid(row=1, column=0, padx=10, sticky="ew")
         self.Question1Page.option2_frame.pack(pady=10, padx=30, anchor="w")
-        self.Question1Page.option2_radio = customtkinter.CTkRadioButton(master=self.Question1Page.option2_frame, variable=self.Question1Page.radio_option, value=2, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[2], text_color="white", corner_radius=6)
+        self.Question1Page.option2_radio = customtkinter.CTkRadioButton(master=self.Question1Page.option2_frame, command=self.radio_option2_callback, variable=self.Question1Page.radio_option, value=2, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[2], text_color="white", corner_radius=6)
         self.Question1Page.option2_radio.grid(row=0, column=0, pady=10, padx=30, sticky="nsew")
 
         # Buttons 3 and 4 do not always appear, appearance is based on the number of options that the question has available
@@ -433,13 +566,19 @@ class App(customtkinter.CTk): # Creating a class for the app
                 self.Question1Page.option3_frame = customtkinter.CTkFrame(self.Question1Page.option_frame, fg_color="#08343C", border_color="#08343C", height=80, corner_radius=8)
                 #self.Question1Page.option3_frame.grid(row=0, column=0, padx=10, sticky="ew")
                 self.Question1Page.option3_frame.pack(pady=10, padx=30, anchor="w")
-                self.Question1Page.option3_radio = customtkinter.CTkRadioButton(master=self.Question1Page.option3_frame, variable=self.Question1Page.radio_option, value=1, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[3], text_color="white", corner_radius=6)
+                self.Question1Page.option3_radio = customtkinter.CTkRadioButton(master=self.Question1Page.option3_frame, command=self.radio_option3_callback, variable=self.Question1Page.radio_option, value=3, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[3], text_color="white", corner_radius=6)
                 self.Question1Page.option3_radio.grid(row=0, column=0, pady=10, padx=30, sticky="nsew")
             case 4:
+                self.Question1Page.option3_frame = customtkinter.CTkFrame(self.Question1Page.option_frame, fg_color="#08343C", border_color="#08343C", height=80, corner_radius=8)
+                #self.Question1Page.option3_frame.grid(row=0, column=0, padx=10, sticky="ew")
+                self.Question1Page.option3_frame.pack(pady=10, padx=30, anchor="w")
+                self.Question1Page.option3_radio = customtkinter.CTkRadioButton(master=self.Question1Page.option3_frame, command=self.radio_option3_callback, variable=self.Question1Page.radio_option, value=3, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[3], text_color="white", corner_radius=6)
+                self.Question1Page.option3_radio.grid(row=0, column=0, pady=10, padx=30, sticky="nsew")
+                
                 self.Question1Page.option4_frame = customtkinter.CTkFrame(self.Question1Page.option_frame, fg_color="#08343C", border_color="#08343C", height=80, corner_radius=8)
                 #self.Question1Page.option4_frame.grid(row=1, column=0, padx=10, sticky="ew")
                 self.Question1Page.option4_frame.pack(pady=10, padx=30, anchor="w")
-                self.Question1Page.option4_radio = customtkinter.CTkRadioButton(master=self.Question1Page.option3_frame, variable=self.Question1Page.radio_option, value=2, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[4], text_color="white", corner_radius=6)
+                self.Question1Page.option4_radio = customtkinter.CTkRadioButton(master=self.Question1Page.option4_frame, command=self.radio_option4_callback, variable=self.Question1Page.radio_option, value=4, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[4], text_color="white", corner_radius=6)
                 self.Question1Page.option4_radio.grid(row=0, column=0, pady=10, padx=30, sticky="nsew")
 
     def new_project_button_event(self):
@@ -447,29 +586,6 @@ class App(customtkinter.CTk): # Creating a class for the app
 
     def user_manual_button_event(self):
         print("test")
-
-    def changeQuestion(self, question_index, direction): # Method used to switch between questions in the software
-        # Direction takes values -1 or 1: -1 is to go to the previous question, +1 is to go to the next question
-        # The next question that is selected is based on the flow of the decision tree, as documented in the flow chart
-
-        # By this stage we should have already validated whether the user is able to go back to a previous question or go to the next one
-        if direction == 1: # Going to the next question
-            print("Going to next question")
-            next_question_index = get_next_question_index(self.Question1Page.radio_option)
-
-        elif direction == -1: # Going to the previous question
-            print("Going to previous question")
-
-        # Changes to the text associated with the question
-        print("changeQuestion")
-        self.question_arr = self.get_question_text(question_index) # gets the text associated with each of the questions
-        self.Question1Page.question_title.configure(text=self.question_arr[0])
-        self.Question1Page.question_desc.configure(text=self.question_arr[1])
-        self.Question1Page.question_text.configure(text=self.question_arr[2])
-        # Changes the options associated with the question
-        self.generate_radio_buttons(question_index)
-
-        self.current_question += 1  # Iterate the current question number
     
     def get_next_question_index(self, radio_button_value, question_index): # Method takes the value of the current question and the value of the radio button to know which question should come next
         # Note that the value of the radio button has a different meaning depending on the question that it is coupled with
@@ -528,6 +644,37 @@ class App(customtkinter.CTk): # Creating a class for the app
                 next_question_index = "<EXCEPTION REACHED>"
         return next_question_index
 
+    def changeQuestion(self, question_index, direction): # Method used to switch between questions in the software -- Triggered by the 'next' button or the chapter select
+        # Direction takes values -1 or 1: -1 is to go to the previous question, +1 is to go to the next question
+        # The next question that is selected is based on the flow of the decision tree, as documented in the flow chart
+        # -- Note that destination (dest) question in this case could also refer to the previous question if we are trying to go to the previous question
+
+        # By this stage we should have already validated whether the user is able to go back to a previous question or go to the next one
+        if direction == 1: # Going to the next question
+            print("Going to next question")
+            dest_question_index = self.get_next_question_index(self.Question1Page.radio_option.get(), question_index) # Get the index of the next question based on the user's response # gets the text associated with each of the questions
+        elif direction == -1: # Going to the previous question
+            print("Going to previous question")
+            dest_question_index = self.prev_question
+        # Changes to the text associated with the question
+        print("changeQuestion")
+        self.question_arr = self.get_question_text(dest_question_index)
+        self.Question1Page.question_title.configure(text=self.question_arr[0])
+        self.Question1Page.question_desc.configure(text=self.question_arr[1])
+        self.Question1Page.question_text.configure(text=self.question_arr[2])
+
+        # Change button states accordingly
+        if (dest_question_index) == 1: # If we are on the first question
+            # Disable the 'previous' button
+            self.Question1Page.prev_button.configure(state="disabled")
+
+        self.prev_question = self.current_question # Store the question index of the previous question
+        self.current_question = dest_question_index  # Update the current question number
+    
+        # Changes the options associated with the question
+        self.generate_radio_buttons(dest_question_index)
+        
+    
 if __name__ == "__main__":
     app = App()
     app.mainloop()
