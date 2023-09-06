@@ -17,18 +17,25 @@ class App(customtkinter.CTk): # Creating a class for the app
         #----PAGE DECLARATIONS----#
         self.WelcomePage = customtkinter.CTkFrame(self, fg_color="white", width=self.WIDTH, height=self.HEIGHT)
         self.WelcomePage.pack(fill=customtkinter.BOTH)
-        # Bring welcome page to the top
-        #self.WelcomePage.tkraise()
-        
-        #self.Question2Page = customtkinter.CTkFrame(self)
+
         self.geometry(f"{self.WIDTH}x{self.HEIGHT}") # setting the window size
 
         ##----VARIABLES FOR STORING QUESTION LOGIC----#
         self.current_question = "0" # Stores the string that indicates which question that the user is currently on ("0" refers to the welcome page)
-        self.prev_question = "0"
+        self.question_history = ["0"] # array that stores the history of questions that the user has been to
+        self.scores = { # Python dictionary to keep track of the scores
+            "BLE": 0,
+            "Wi-Fi BLE Hybrid": 0,
+            "Wi-Fi": 0,
+            "RF": 0,
+            "DECT": 0
+        }
+        customtkinter.set_default_color_theme("style/styles.json")
+        self.company_logo = customtkinter.CTkImage(light_image=Image.open("img/AECOM_logo.png"), dark_image=Image.open("img/AECOM_logo.png"), size=(110,25))
+        #self.build_welcome_page()
+        self.build_results_page() # Just for testing purposes
 
-        ##----------WELCOME PAGE---------##
-
+    def build_welcome_page(self):
         #----GRID CONFIGURAIONS----
         # Adjusting the weights of the rows in the window in the case of resizing
         self.WelcomePage.grid_rowconfigure((0,1), weight=1)
@@ -37,14 +44,10 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.WelcomePage.grid_columnconfigure((1,2,3), weight=5)
         self.WelcomePage.grid_columnconfigure((0,4), weight=1)
 
-        #----STYLING----
-        customtkinter.set_default_color_theme("style/styles.json")
-
         #----WIDGET CONFIGURATIONS----#
         # Top bar
         self.WelcomePage.logo_frame = customtkinter.CTkFrame(self.WelcomePage, fg_color='#08343C', height=60, border_color='#08343C')
         self.WelcomePage.logo_frame.grid(row=0, column=0, columnspan=5, rowspan=1, sticky="new")
-        self.company_logo = customtkinter.CTkImage(light_image=Image.open("img/AECOM_logo.png"), dark_image=Image.open("img/AECOM_logo.png"), size=(110,25))
         self.WelcomePage.company_logo_label = customtkinter.CTkLabel(self.WelcomePage.logo_frame, image=self.company_logo, text="", fg_color="#08343C", width=120)  # display image with a CTkLabel
         self.WelcomePage.company_logo_label.grid(row=0, column=0, padx=10, pady=15)
 
@@ -130,9 +133,17 @@ class App(customtkinter.CTk): # Creating a class for the app
     def changeToQuestion1(self): # Function to change from welcome page and question 1
         ##----------QUESTION 1 PAGE----------##
         print("changeToQuestion1")
-        self.WelcomePage.pack_forget()
+        try:
+            self.WelcomePage.destroy()
+        except AttributeError:
+            print("Welcome Page does not exist")
+        try:
+            self.ResultsPage.destroy()
+        except AttributeError:
+            print("Results Page does not exist")
 
         self.current_question = "1" # Now moved onto the first question
+        self.question_history.append("1")
 
         self.Question1Page = customtkinter.CTkFrame(self, fg_color="white", width=self.WIDTH, height=self.HEIGHT) # Creating frame to span the whole page
         self.Question1Page.grid_rowconfigure((0,1), weight=1)
@@ -257,8 +268,10 @@ class App(customtkinter.CTk): # Creating a class for the app
         return (self.current_question != "1")
 
     def callback_next_button(self):
+        self.increase_scores(self.current_question, self.Question1Page.radio_option.get()) # adjust the scores
         # Change the current question we are on
         self.changeQuestion(self.current_question, 1)
+        
         # Enable/disable the next button depending on which question we end up on
         if self.cond_next_button(): # If we satisfy the conditions to go to the next question
             self.Question1Page.next_button.configure(state="enabled")
@@ -273,13 +286,13 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.changeQuestion(self.current_question, -1)
         # Enable/disable the next button depending on which question we end up on
         if self.cond_next_button: # If we satisfy the conditions to go to the next question
-            self.Question1Page.next_button.configure(state="disabled")
-        else:
             self.Question1Page.next_button.configure(state="enabled")
-        if self.cond_prev_button: # # If we satisfy the conditions to go back to the previous question
-            self.Question1Page.prev_button.configure(state="disabled")
-        else: 
+        else:
+            self.Question1Page.next_button.configure(state="disabled")
+        if self.cond_prev_button(): # # If we satisfy the conditions to go back to the previous question
             self.Question1Page.prev_button.configure(state="enabled")
+        else: 
+            self.Question1Page.prev_button.configure(state="disabled")
     
     def radio_option1_callback(self):
         print("Selected option",self.Question1Page.radio_option.get())
@@ -531,19 +544,27 @@ class App(customtkinter.CTk): # Creating a class for the app
     def generate_radio_buttons(self, question_index): # Function for dynamically generating the radio buttons that sit on the bottom of the question page
         # Check if this is the first function call
         print("Current_question:" + self.current_question)
-        if (self.current_question != "1" or (self.current_question == "1" and self.prev_question == "2")):
-            # If we are not on the first question, or we are going from the second question to the first question
+        #if (self.question_history[-1] != "1" or (self.question_history[-1] == "1" and self.question_history[-2] == "2")): # If we are not on question 1 or going back to question 1
             # The option frames will already exist in all of these cases, since the options are first generated when going from the welcome page to question 1
+        try:
             self.Question1Page.option1_frame.destroy()
+        except AttributeError:
+            print("Option1 doesn't exist")
+        try:
             self.Question1Page.option2_frame.destroy()
+        except AttributeError:
+            print("Option2 doesn't exist")
+        try:
+            self.Question1Page.option3_frame.destroy()
+        except AttributeError:
+            print("Option3 doesn't exist")
+        try:
+            self.Question1Page.option4_frame.destroy()
+        except AttributeError:
+            print("Option4 doesn't exist")
             # The above is only assuming that the first question has 2 options, pack_forget() on more options must be added if this changes.
-            prev_num_options = self.get_question_options(self.prev_question)[0] # get the number of multi choice options there were for the previous question
-            if prev_num_options == 3: # If there were 3 options, unpack the 3rd option as well
-                self.Question1Page.option3_frame.destroy()
-            if prev_num_options == 4: # If there were 4 options, unpack the 3rd and 4th options as well
-                self.Question1Page.option3_frame.destroy()
-                self.Question1Page.option4_frame.destroy()
-        
+            # Destroy the option 3 and 4 frames if they exist
+            
         # Creating radio buttons
         radio_options = self.get_question_options(question_index) # Get the options to put inside the radio buttons
 
@@ -595,24 +616,18 @@ class App(customtkinter.CTk): # Creating a class for the app
                 next_question_index = "2" # All responses to this question lead to the same result
             case "2":
                 match radio_button_value: # Use the value of the radio button to determine which question the program is supposed to go to next
-                    case 0: # No radio button option has been selected
-                        next_question_index = "-1" # value of -1 is returned to indicate that the user cannot proceed to the next question yet!
                     case 1:
                         next_question_index = "4"
                     case 2:
                         next_question_index = "3a"
             case "3a": 
                 match radio_button_value: 
-                    case 0: 
-                        next_question_index = "-1" 
                     case 1:
                         next_question_index = "5a"
                     case 2:
                         next_question_index = "3b"
             case "3b": 
                 match radio_button_value: 
-                    case 0: 
-                        next_question_index = "-1"
                     case 1:
                         next_question_index = "5a"
                     case 2:
@@ -648,14 +663,16 @@ class App(customtkinter.CTk): # Creating a class for the app
         # Direction takes values -1 or 1: -1 is to go to the previous question, +1 is to go to the next question
         # The next question that is selected is based on the flow of the decision tree, as documented in the flow chart
         # -- Note that destination (dest) question in this case could also refer to the previous question if we are trying to go to the previous question
-
+        print(self.question_history)
         # By this stage we should have already validated whether the user is able to go back to a previous question or go to the next one
         if direction == 1: # Going to the next question
             print("Going to next question")
             dest_question_index = self.get_next_question_index(self.Question1Page.radio_option.get(), question_index) # Get the index of the next question based on the user's response # gets the text associated with each of the questions
+            self.question_history.append(dest_question_index) # Add the new question to the question_history
         elif direction == -1: # Going to the previous question
             print("Going to previous question")
-            dest_question_index = self.prev_question
+            dest_question_index = self.question_history[-2] # get second last item from question history
+            self.question_history.pop() # Remove the most recent question from the question history
         # Changes to the text associated with the question
         print("changeQuestion")
         self.question_arr = self.get_question_text(dest_question_index)
@@ -668,12 +685,239 @@ class App(customtkinter.CTk): # Creating a class for the app
             # Disable the 'previous' button
             self.Question1Page.prev_button.configure(state="disabled")
 
-        self.prev_question = self.current_question # Store the question index of the previous question
         self.current_question = dest_question_index  # Update the current question number
     
         # Changes the options associated with the question
         self.generate_radio_buttons(dest_question_index)
         
+    def increase_scores(self, question_index, radio_button_value): # Increase the score of particular locating technology based on which question the user is on and what option they have selected
+        print("Increase scores, question_index:",question_index, "radio_button_value", radio_button_value)
+        match question_index: #Switch case statement to get the text for each of the options within the question            
+            case "1":
+                match radio_button_value: # Use the value of the radio button to determine which question the program is supposed to go to next
+                    case 1:
+                        self.scores["BLE"] += 1
+                        self.scores["Wi-Fi BLE Hybrid"] += 1
+                        self.scores["Wi-Fi"] -= 1
+                        self.scores["RF"] -= 1
+                    case 2:
+                        self.scores["Wi-Fi"] += 1
+                        self.scores["RF"] -= 1
+                        self.scores["DECT"] -= 1
+                    case 3:
+                        self.scores["RF"] += 1
+                        self.scores["DECT"] += 1
+            case "3b": 
+                match radio_button_value: 
+                    case 1:
+                        self.scores["BLE"] += 1
+                        self.scores["RF"] += 1
+                        self.scores["Wi-Fi"] -= 2
+                        self.scores["Wi-Fi BLE Hybrid"] -= 2
+                    case 2:
+                        self.scores["Wi-Fi BLE Hybrid"] += 1
+                        self.scores["Wi-Fi"] += 2
+            case "4": 
+                match radio_button_value: 
+                    case 1:
+                        self.scores["BLE"] += 3
+                        self.scores["RF"] += 3
+                        self.scores["DECT"] += 3
+                        self.scores["Wi-Fi"] -= 1
+            case "5a": 
+                match radio_button_value: 
+                    case 1:
+                        self.scores["BLE"] += 3
+                        self.scores["RF"] += 3
+                        self.scores["DECT"] += 3
+                        self.scores["Wi-Fi"] -= 1
+            case "5b": 
+                match radio_button_value: 
+                    case 1:
+                        self.scores["BLE"] += 2
+                        self.scores["RF"] += 2
+                        self.scores["Wi-Fi"] += 4
+                        self.scores["Wi-Fi BLE Hybrid"] += 3
+                        self.scores["DECT"] += 2
+            case "6": 
+                match radio_button_value: 
+                    case 1:
+                        self.scores["BLE"] += 2
+                        self.scores["RF"] += 1
+            case "7": 
+                match radio_button_value: 
+                    case 1:
+                        self.scores["BLE"] += 2
+                        self.scores["Wi-Fi BLE Hybrid"] += 2
+                        self.scores["Wi-Fi"] += 1
+                    case 2:
+                        self.scores["Wi-Fi"] += 2
+                    case 3:
+                        self.scores["DECT"] += 2
+                    case 4:
+                        self.scores["RF"] += 2
+            case "8": 
+               match radio_button_value: 
+                    case 1:
+                        self.scores["BLE"] += 2
+                        self.scores["Wi-Fi BLE Hybrid"] += 2
+                    case 2:
+                       self.scores["Wi-Fi"] += 2
+                    case 3:
+                       self.scores["DECT"] += 2
+                       
+            case "9a": 
+                match radio_button_value: 
+                    case 1:
+                        self.scores["BLE"] += 1
+                        self.scores["RF"] += 1
+                        self.scores["Wi-Fi"] -= 1
+            case "9b": 
+                match radio_button_value: 
+                    case 1:
+                        self.scores["Wi-Fi"] -= 2
+                        self.scores["Wi-Fi BLE Hybrid"] -= 1
+            case "9c":
+                match radio_button_value: 
+                    case 1:
+                        self.scores["Wi-Fi"] -= 2
+                        self.scores["Wi-Fi BLE Hybrid"] -= 2
+            case "9d":
+                match radio_button_value: 
+                    case 1:
+                        self.scores["RF"] -= 2
+            case "9e": 
+                match radio_button_value: 
+                    case 1:
+                        self.scores["Wi-Fi"] -= 2
+                        self.scores["Wi-Fi BLE Hybrid"] -= 2
+            case _:
+                print("<EXCEPTION REACHED -- scores not adjusted, invalid question index>")
+        print(self.scores)
+
+    def build_results_page(self):
+         ##----------RESULTS PAGE----------##
+        print("changeToQuestion1")
+        try:
+            self.WelcomePage.destroy()
+        except AttributeError:
+            print("Welcome Page does not exist")
+        try:
+            self.ResultsPage.destroy()
+        except AttributeError:
+            print("Results Page does not exist")
+
+        self.ResultsPage = customtkinter.CTkFrame(self, fg_color="white", width=self.WIDTH, height=self.HEIGHT) # Creating frame to span the whole page
+        self.ResultsPage.grid_columnconfigure((0,5),weight=1)
+        self.ResultsPage.grid_columnconfigure((1,2,3,4), weight=8)
+                #----WIDGET CONFIGURATIONS----#
+        # Top bar
+        self.ResultsPage.logo_frame = customtkinter.CTkFrame(self.ResultsPage, fg_color='#08343C', border_color='#08343C')
+        self.ResultsPage.logo_frame.grid(row=0, column=0, columnspan=5, rowspan=1, sticky="new")
+        self.ResultsPage.company_logo_label = customtkinter.CTkLabel(self.ResultsPage.logo_frame, image=self.company_logo, text="", fg_color="#08343C", width=120)  # display image with a CTkLabel
+        self.ResultsPage.company_logo_label.grid(row=0, column=0, padx=10, pady=15)
+
+        # Create a frame for each of the buttons and blank spaces in the toolbar
+
+        # Following frames separate the buttons into their own frames to align their spacing
+        self.ResultsPage.buttonbar_frame = customtkinter.CTkFrame(self.ResultsPage,width=self.WIDTH-200, height=60, fg_color='red', border_width=2, border_color="red")
+        self.ResultsPage.buttonbar_frame.grid(row=1,column=0, columnspan=5, sticky="nesw")
+        #Following grid configurations follow the same as the main page
+        self.ResultsPage.buttonbar_frame.grid_columnconfigure((1,2,3,4), weight=8)
+        self.ResultsPage.buttonbar_frame.grid_columnconfigure(0, weight=1)
+        self.ResultsPage.buttonbar_frame.grid_columnconfigure(5, weight=1)
+
+        # Following frames separate the buttons into their own frames to align their spacing
+        self.ResultsPage.buttonbar_frame0 = customtkinter.CTkFrame(self.ResultsPage.buttonbar_frame, height=60, fg_color='red', border_color='#048B6B')
+        self.ResultsPage.buttonbar_frame0.grid(row=1,column=0, columnspan=1, sticky="nesw")
+        self.ResultsPage.buttonbar_frame1 = customtkinter.CTkFrame(self.ResultsPage.buttonbar_frame, width=40, height=60, fg_color='blue', border_color='#048B6B')
+        self.ResultsPage.buttonbar_frame1.grid(row=1,column=1, columnspan=1, sticky="nsew") 
+        self.ResultsPage.buttonbar_frame2 = customtkinter.CTkFrame(self.ResultsPage.buttonbar_frame, width=40, height=60, fg_color='green', border_color='#048B6B')
+        self.ResultsPage.buttonbar_frame2.grid(row=1,column=2, columnspan=1, sticky="nesw") 
+        self.ResultsPage.buttonbar_frame3 = customtkinter.CTkFrame(self.ResultsPage.buttonbar_frame, width=40, height=60, fg_color='yellow', border_color='#048B6B')
+        self.ResultsPage.buttonbar_frame3.grid(row=1,column=3, columnspan=1, sticky="nesw")
+        self.ResultsPage.buttonbar_frame4 = customtkinter.CTkFrame(self.ResultsPage.buttonbar_frame, width=40, height=60, fg_color='pink', border_color='#048B6B')
+        self.ResultsPage.buttonbar_frame4.grid(row=1,column=4, columnspan=1, sticky="nesw")
+        self.ResultsPage.buttonbar_frame5 = customtkinter.CTkFrame(self.ResultsPage.buttonbar_frame, height=60, fg_color='#048B6B', border_color='#048B6B')
+        self.ResultsPage.buttonbar_frame5.grid(row=1,column=5, columnspan=1, sticky="nesw") 
+
+        # Creating a frame to hold all of the content frames in the white space
+        self.content_height=self.HEIGHT-self.ResultsPage.buttonbar_frame.cget("height")-self.ResultsPage.logo_frame.cget("height")-100
+        self.ResultsPage.content_frame = customtkinter.CTkFrame(self.ResultsPage, fg_color="white", width=self.WIDTH, height=self.content_height) 
+        self.ResultsPage.content_frame.grid(row=2, column=1, rowspan=4, columnspan=4, sticky="nsew", padx=20, pady=10)
+        self.ResultsPage.content_frame.grid_rowconfigure(0,weight = 1)
+        self.ResultsPage.content_frame.grid_rowconfigure(1,weight = 3)
+        self.ResultsPage.content_frame.grid_rowconfigure(2,weight = 10)
+        self.ResultsPage.content_frame.grid_columnconfigure((0,2), weight = 2)
+        self.ResultsPage.content_frame.grid_columnconfigure(1,weight=4)
+
+        # Creating buttons
+        self.ResultsPage.save_project_button = customtkinter.CTkButton(self.ResultsPage.buttonbar_frame1, command=self.user_manual_button_event, text='Save Current Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        self.ResultsPage.save_project_button.pack(padx=5, pady=10)
+        self.ResultsPage.load_button = customtkinter.CTkButton(self.ResultsPage.buttonbar_frame2, command=self.load_project_button_event, text='Load Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        self.ResultsPage.load_button.pack(padx=5, pady=10)
+        self.ResultsPage.new_project_button = customtkinter.CTkButton(self.ResultsPage.buttonbar_frame3, command=self.changeToQuestion1, text='New Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        self.ResultsPage.new_project_button.pack(padx=5, pady=10)
+        self.ResultsPage.user_manual_button = customtkinter.CTkButton(self.ResultsPage.buttonbar_frame4, command=self.user_manual_button_event, text='User Manual', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        self.ResultsPage.user_manual_button.pack(padx=5, pady=10)
+
+        # Contents on page
+        # Labels
+        self.ResultsPage.content_frame.heading = customtkinter.CTkLabel(self.ResultsPage.content_frame, text="Results", font=customtkinter.CTkFont(size=24, weight="bold"), text_color="#08343C", anchor="w")
+        self.ResultsPage.content_frame.heading.grid(row=0, column=1, columnspan=3, padx=20, pady=10)
+        self.ResultsPage.content_frame.description = customtkinter.CTkLabel(self.ResultsPage.content_frame, text="Description for results", font=customtkinter.CTkFont(size=16, weight="bold"), text_color="#08343C", anchor="w")
+        self.ResultsPage.content_frame.description.grid(row=1, column=1, columnspan=3, padx=20, pady=10)
+
+        # Tab views
+        self.ResultsPage.results_tab = customtkinter.CTkTabview(
+            self.ResultsPage.content_frame, width=self.WIDTH, 
+            fg_color="#78BCAC", corner_radius=6, 
+            segmented_button_fg_color="#048B6B", 
+            segmented_button_selected_color="#08343C",
+            segmented_button_unselected_color="#048B6B",
+            segmented_button_selected_hover_color="#08343C",
+            segmented_button_unselected_hover_color="#08343C")
+        
+        self.ResultsPage.results_tab.grid(row=2,column=1, columnspan=3, padx=20, pady=20)
+        self.ResultsPage.results_tab.add("Result 1")
+        self.ResultsPage.results_tab.add("Result 2")
+        self.ResultsPage.results_tab.add("Result 3")
+
+        # Creating the first tab
+        self.ResultsPage.results_tab.tab("Result 1").grid_columnconfigure(0,weight=1)
+        self.ResultsPage.results_tab.tab("Result 1").grid_columnconfigure(1,weight=30)
+        self.ResultsPage.results_tab.tab("Result 1").grid_rowconfigure((0,2), weight=1) # Weights for the headings
+        self.ResultsPage.results_tab.tab("Result 1").grid_rowconfigure((1,3), weight=8) # Weights for the body text
+
+        #Putting widgets inside the first tab
+        self.ResultsPage.results_tab.number_tag = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="1", font=customtkinter.CTkFont(size=14, weight="bold"), text_color="white", corner_radius=500, fg_color="#048B6B", width=30, height=30)
+        self.ResultsPage.results_tab.number_tag.grid(row=0, column=0, padx=5, pady=5)
+        self.ResultsPage.results_tab.results_subheading1 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="Description", font=customtkinter.CTkFont(size=16, weight="bold"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_subheading1.grid(row=0, column=1, sticky="nesw", padx=30, pady=10)
+        self.ResultsPage.results_tab.results_description = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="Description", font=customtkinter.CTkFont(size=12, weight="normal"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_description.grid(row=1, column=1, sticky="nesw", padx=30, pady=10)
+        self.ResultsPage.results_tab.results_subheading2 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="Description", font=customtkinter.CTkFont(size=14, weight="bold"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_subheading2.grid(row=2, column=1, sticky="nesw", padx=30, pady=10)
+        self.ResultsPage.results_tab.results_characteristics = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="Description", font=customtkinter.CTkFont(size=12, weight="normal"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_characteristics.grid(row=3, column=1, sticky="nesw", padx=30, pady=10)
+
+        self.ResultsPage.prevnext_frame = customtkinter.CTkFrame(self.ResultsPage.content_frame)
+        self.ResultsPage.prevnext_frame.grid(row=3, column=0, columnspan=3, sticky="nsew", padx=20, pady=20)
+        self.ResultsPage.prevnext_frame.grid_columnconfigure(0,weight=15)
+        self.ResultsPage.prevnext_frame.grid_columnconfigure((1,2),weight=1)
+        self.ResultsPage.prevnext_frame.grid_rowconfigure(0,weight=1)
+
+        # Creating Previous and next buttons at the bottom of the page
+        self.ResultsPage.prev_button = customtkinter.CTkButton(self.ResultsPage.prevnext_frame, command=self.callback_prev_button, text='Save', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        self.ResultsPage.prev_button.grid(row=2, column=2)
+        self.ResultsPage.prev_button.configure(state="disabled") # Disable the previous question button since we are on the first question
+        self.ResultsPage.next_button = customtkinter.CTkButton(self.ResultsPage.prevnext_frame, command=self.callback_next_button, text='Print to .docx', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        self.ResultsPage.next_button.grid(row=2, column=3)
+        self.ResultsPage.next_button.configure(state="disabled") # Can't go to the next question until we put in a radio option
+
+        self.ResultsPage.pack(fill=customtkinter.BOTH)
+        #self.ResultsPage.grid(row=0, column=0, sticky="nesw")
+
     
 if __name__ == "__main__":
     app = App()
