@@ -1,6 +1,7 @@
 import customtkinter
 from PIL import Image
 import os
+import copy
 
 customtkinter.set_appearance_mode("light")
 customtkinter.set_default_color_theme("green")
@@ -21,6 +22,14 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.geometry(f"{self.WIDTH}x{self.HEIGHT}") # setting the window size
 
         ##----VARIABLES FOR STORING QUESTION LOGIC----#
+        self.reset_variables()
+
+        customtkinter.set_default_color_theme("style/styles.json")
+        self.company_logo = customtkinter.CTkImage(light_image=Image.open("img/AECOM_logo.png"), dark_image=Image.open("img/AECOM_logo.png"), size=(110,25))
+        self.build_welcome_page()
+        #self.build_results_page() # Just for testing purposes
+
+    def reset_variables(self):
         self.current_question = "0" # Stores the string that indicates which question that the user is currently on ("0" refers to the welcome page)
         self.question_history = ["0"] # array that stores the history of questions that the user has been to
         self.scores = { # Python dictionary to keep track of the scores
@@ -30,12 +39,26 @@ class App(customtkinter.CTk): # Creating a class for the app
             "RF": 0,
             "DECT": 0
         }
-        customtkinter.set_default_color_theme("style/styles.json")
-        self.company_logo = customtkinter.CTkImage(light_image=Image.open("img/AECOM_logo.png"), dark_image=Image.open("img/AECOM_logo.png"), size=(110,25))
-        #self.build_welcome_page()
-        self.build_results_page() # Just for testing purposes
+        self.good_char = { # Python dictionary to store all of the good characteristics that each technology has based on the user's choices
+            "BLE": [],
+            "Wi-Fi BLE Hybrid": [],
+            "Wi-Fi": [],
+            "RF": [],
+            "DECT": []
+        }
+        self.bad_char = { # Python dictionary to store all of the bad characterstics that each technology has based on the user's choices
+            "BLE": [],
+            "Wi-Fi BLE Hybrid": [],
+            "Wi-Fi": [],
+            "RF": [],
+            "DECT": []
+        }
 
     def build_welcome_page(self):
+
+        # Initialising variables that will be used throughout the program logic
+        self.reset_variables()
+
         #----GRID CONFIGURAIONS----
         # Adjusting the weights of the rows in the window in the case of resizing
         self.WelcomePage.grid_rowconfigure((0,1), weight=1)
@@ -261,9 +284,10 @@ class App(customtkinter.CTk): # Creating a class for the app
 # Set of callback functions to abstract the execution of commands that are done when different buttons in the program are clicked
     def cond_next_button(self):
         # If we are not on the last question and we have selected a radio option
-        print(self.current_question, self.Question1Page.radio_option.get())
-        print(self.current_question != "9e" and self.Question1Page.radio_option.get()!=0)
-        return (self.current_question != "9e" and self.Question1Page.radio_option.get()!=0)
+        #print(self.current_question, self.Question1Page.radio_option.get())
+       # print(self.current_question != "9e" and self.Question1Page.radio_option.get()!=0)
+        #return (self.current_question != "9e" and self.Question1Page.radio_option.get()!=0)
+        return (self.Question1Page.radio_option.get()!=0)
     def cond_prev_button(self):
         return (self.current_question != "1")
 
@@ -295,7 +319,7 @@ class App(customtkinter.CTk): # Creating a class for the app
             self.Question1Page.prev_button.configure(state="disabled")
     
     def radio_option1_callback(self):
-        print("Selected option",self.Question1Page.radio_option.get())
+        print("Selected option:",self.Question1Page.radio_option.get())
         # Code to change the colour framing
         self.Question1Page.option1_frame.configure(fg_color="#a9c855")
         self.Question1Page.option1_radio.configure(text_color="#08343C")
@@ -316,7 +340,7 @@ class App(customtkinter.CTk): # Creating a class for the app
             self.Question1Page.next_button.configure(state="disabled")
     
     def radio_option2_callback(self):
-        print("Selected option",self.Question1Page.radio_option.get())
+        print("Selected option:",self.Question1Page.radio_option.get())
         # Code to change the colour framing
         self.Question1Page.option2_frame.configure(fg_color="#a9c855")
         self.Question1Page.option2_radio.configure(text_color="#08343C")
@@ -337,7 +361,7 @@ class App(customtkinter.CTk): # Creating a class for the app
             self.Question1Page.next_button.configure(state="disabled")
 
     def radio_option3_callback(self):
-        print("Selected option",self.Question1Page.radio_option.get())
+        print("Selected option:",self.Question1Page.radio_option.get())
         # Code to change the colour framing
         self.Question1Page.option3_frame.configure(fg_color="#a9c855")
         self.Question1Page.option3_radio.configure(text_color="#08343C")
@@ -357,12 +381,12 @@ class App(customtkinter.CTk): # Creating a class for the app
             self.Question1Page.next_button.configure(state="disabled")
     
     def radio_option4_callback(self):
-        print("Selected option",self.Question1Page.radio_option.get())
+        print("Selected option:",self.Question1Page.radio_option.get())
         # Code to change the colour framing
         self.Question1Page.option4_frame.configure(fg_color="#a9c855")
         self.Question1Page.option4_radio.configure(text_color="#08343C")
         # Change the colours of the other buttons back
-        self.Question1Page.option_frame.configure(fg_color="#08343C")
+        self.Question1Page.option1_frame.configure(fg_color="#08343C")
         self.Question1Page.option1_radio.configure(text_color="white")
         self.Question1Page.option2_frame.configure(fg_color="#08343C")
         self.Question1Page.option2_radio.configure(text_color="white")
@@ -503,9 +527,11 @@ class App(customtkinter.CTk): # Creating a class for the app
                 question_option4 = "RF Handset"
                 num_options = 4        
             case "8": # Each case is one of the questions in the decision tree
-                question_option1 = "Yes"
-                question_option2 = "No"
-                num_options = 2   
+                question_option1 = "Smartphone, Wi-Fi and bluetooth capable"
+                question_option2 = "Smartphone, Wi-Fi capable only"
+                question_option3 = "DECT Handset"
+                question_option4 = "RF Handset"
+                num_options = 4          
             case "9a": # Each case is one of the questions in the decision tree
                 question_option1 = "Thick walls"
                 question_option2 = "Thin walls or medium walls or not sure"
@@ -606,7 +632,7 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.changeToQuestion1()
 
     def user_manual_button_event(self):
-        print("test")
+        print("User Manual event")
     
     def get_next_question_index(self, radio_button_value, question_index): # Method takes the value of the current question and the value of the radio button to know which question should come next
         # Note that the value of the radio button has a different meaning depending on the question that it is coupled with
@@ -623,9 +649,9 @@ class App(customtkinter.CTk): # Creating a class for the app
             case "3a": 
                 match radio_button_value: 
                     case 1:
-                        next_question_index = "5a"
-                    case 2:
                         next_question_index = "3b"
+                    case 2:
+                        next_question_index = "5a"
             case "3b": 
                 match radio_button_value: 
                     case 1:
@@ -654,7 +680,8 @@ class App(customtkinter.CTk): # Creating a class for the app
                 next_question_index = "9e"
             case "9e": 
                 # Results case
-                next_question_index = ""
+                next_question_index = "Results"
+
             case _:
                 next_question_index = "<EXCEPTION REACHED>"
         return next_question_index
@@ -663,32 +690,37 @@ class App(customtkinter.CTk): # Creating a class for the app
         # Direction takes values -1 or 1: -1 is to go to the previous question, +1 is to go to the next question
         # The next question that is selected is based on the flow of the decision tree, as documented in the flow chart
         # -- Note that destination (dest) question in this case could also refer to the previous question if we are trying to go to the previous question
-        print(self.question_history)
+        print("Question History: " + str(self.question_history))
         # By this stage we should have already validated whether the user is able to go back to a previous question or go to the next one
         if direction == 1: # Going to the next question
             print("Going to next question")
             dest_question_index = self.get_next_question_index(self.Question1Page.radio_option.get(), question_index) # Get the index of the next question based on the user's response # gets the text associated with each of the questions
             self.question_history.append(dest_question_index) # Add the new question to the question_history
+            if dest_question_index == "Results": # If we have finished all the questions
+                print("Final question finished, going to results page...")
+                self.build_results_page()
         elif direction == -1: # Going to the previous question
             print("Going to previous question")
             dest_question_index = self.question_history[-2] # get second last item from question history
             self.question_history.pop() # Remove the most recent question from the question history
-        # Changes to the text associated with the question
-        print("changeQuestion")
-        self.question_arr = self.get_question_text(dest_question_index)
-        self.Question1Page.question_title.configure(text=self.question_arr[0])
-        self.Question1Page.question_desc.configure(text=self.question_arr[1])
-        self.Question1Page.question_text.configure(text=self.question_arr[2])
 
-        # Change button states accordingly
-        if (dest_question_index) == 1: # If we are on the first question
-            # Disable the 'previous' button
-            self.Question1Page.prev_button.configure(state="disabled")
+        if dest_question_index != "Results":
+            # Changes to the text associated with the question
+            print("changeQuestion")
+            self.question_arr = self.get_question_text(dest_question_index)
+            self.Question1Page.question_title.configure(text=self.question_arr[0])
+            self.Question1Page.question_desc.configure(text=self.question_arr[1])
+            self.Question1Page.question_text.configure(text=self.question_arr[2])
 
-        self.current_question = dest_question_index  # Update the current question number
-    
-        # Changes the options associated with the question
-        self.generate_radio_buttons(dest_question_index)
+            # Change button states accordingly
+            if (dest_question_index) == 1: # If we are on the first question
+                # Disable the 'previous' button
+                self.Question1Page.prev_button.configure(state="disabled")
+
+            self.current_question = dest_question_index  # Update the current question number
+        
+            # Changes the options associated with the question
+            self.generate_radio_buttons(dest_question_index)
         
     def increase_scores(self, question_index, radio_button_value): # Increase the score of particular locating technology based on which question the user is on and what option they have selected
         print("Increase scores, question_index:",question_index, "radio_button_value", radio_button_value)
@@ -700,6 +732,7 @@ class App(customtkinter.CTk): # Creating a class for the app
                         self.scores["Wi-Fi BLE Hybrid"] += 1
                         self.scores["Wi-Fi"] -= 1
                         self.scores["RF"] -= 1
+                        self.append_char(0) # add the characteristics that correspond to this option
                     case 2:
                         self.scores["Wi-Fi"] += 1
                         self.scores["RF"] -= 1
@@ -765,7 +798,8 @@ class App(customtkinter.CTk): # Creating a class for the app
                        self.scores["Wi-Fi"] += 2
                     case 3:
                        self.scores["DECT"] += 2
-                       
+                    case 4:
+                       self.scores["RF"] += 2
             case "9a": 
                 match radio_button_value: 
                     case 1:
@@ -794,6 +828,60 @@ class App(customtkinter.CTk): # Creating a class for the app
             case _:
                 print("<EXCEPTION REACHED -- scores not adjusted, invalid question index>")
         print(self.scores)
+    
+    def get_top_results(self, scores_dict): # Method that reads the scores and generates the top as the top recommendations
+        scores_dict_temp = copy.copy(scores_dict) # Create a copy of the scores dictionary that we will be editing to find the top 3 scores
+        print("Final scores:" + str(scores_dict))
+        first_key = max(scores_dict_temp, key=lambda i: scores_dict[i]) # Get the dictionary key of the first score
+        del scores_dict_temp[first_key] # Delete this dictionary key from the temporary dictionary (so we can find the second-highest score)
+        second_key = max(scores_dict_temp, key=lambda i: scores_dict[i]) # Get the dictionary key of the second score
+        del scores_dict_temp[second_key] # Delete this dictionary key from the temporary dictionary (so we can find the third-highest score)
+        third_key = max(scores_dict_temp, key=lambda i: scores_dict[i]) # Get the dictionary key of the third score
+
+        # Get the corresponding scores of all the dictionary keys that had the top 3 scores
+        first_score = scores_dict[first_key]
+        second_score = scores_dict[second_key]
+        third_score = scores_dict[third_key]
+    
+        return first_key, first_score, second_key, second_score, third_key, third_score
+        
+    def append_char(self, ind): # Takes an index and appends the corresponding statement into the good_characteristics of the appropriate technology
+        match ind:
+            case 0:
+                self.good_char["BLE"].append("BLE locators can provide high accuracy positioning as required by this project.")
+                self.good_char["Wi-Fi BLE Hybrid"].append("The Wi-Fi Wireless Access Points coupled with BLE locators can provide high accuracy positioning as required by the project.")
+                self.bad_char["Wi-Fi"].append("The Wi-Fi Wireless Access Points may not be able to reliably provide the high level of accuracy required by the project.")
+                self.bad_char["RF"].append("The RF locators may not be able to reliably provide the high level of accuracy required by the project.")
+                self.bad_char["DECT"].append("The DECT locators may not be able to reliably provide the high level of accuracy required by the project.")
+            case _:
+                print("<EXCEPTION REACHED IN APPEND_CHAR>")
+
+    def get_good_char_text(self, good_char_dict, dict_key): # To be used as the text for the label that sits on the results page to highlight the good characteritics
+        # good_char_dict is the python dictionary that holds the strings of all the good characteristics of each technology based on the decisions that the user made throughout
+        # dict_key is the name of the technology about which the good characteristics are trying to be extracted
+        out_string = ""
+        for characteristic in good_char_dict[dict_key]: # For each good characteristic that has been stored
+            out_string += "\n+ "+characteristic # Add this to the final output string on a new line
+        
+        return out_string
+
+    def get_tech_desc(dict_key): # Method to get the strings for the general descriptions of the technologies
+        output_string = ""
+        match dict_key:
+            case "BLE":
+                output_string = ("Bluetooth Low Energy (BLE) is the locating technology that utilises low power Bluetooth locators throughout a facility to track a mobile device using its Bluetooth." 
+                "When configured correctly it can provide a high accuracy solution (within 3m accuracy) at a lower cost compared to other locating technologies such as Wi-Fi, whose access points may cost several times more.")
+            case "Wi-Fi BLE Hybrid":
+                output_string=""
+            case "Wi-Fi":
+                output_string=""
+            case "RF":
+                output_string=""
+            case "DECT":
+                output_string=""
+            case _:
+                output_string="<EXCEPTION REACHED IN get_tech_disc()>"
+        return output_string
 
     def build_results_page(self):
          ##----------RESULTS PAGE----------##
@@ -803,13 +891,17 @@ class App(customtkinter.CTk): # Creating a class for the app
         except AttributeError:
             print("Welcome Page does not exist")
         try:
-            self.ResultsPage.destroy()
+            self.Question1Page.destroy()
         except AttributeError:
-            print("Results Page does not exist")
+            print("QuestionPage does not exist")
 
         self.ResultsPage = customtkinter.CTkFrame(self, fg_color="white", width=self.WIDTH, height=self.HEIGHT) # Creating frame to span the whole page
         self.ResultsPage.grid_columnconfigure((0,5),weight=1)
         self.ResultsPage.grid_columnconfigure((1,2,3,4), weight=8)
+
+        # Handling the results from the questions
+        top_results = self.get_top_results(self.scores) # Returns a list of first, second, third keys and scores based on the final scores
+
                 #----WIDGET CONFIGURATIONS----#
         # Top bar
         self.ResultsPage.logo_frame = customtkinter.CTkFrame(self.ResultsPage, fg_color='#08343C', border_color='#08343C')
@@ -892,13 +984,13 @@ class App(customtkinter.CTk): # Creating a class for the app
         #Putting widgets inside the first tab
         self.ResultsPage.results_tab.number_tag = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="1", font=customtkinter.CTkFont(size=14, weight="bold"), text_color="white", corner_radius=500, fg_color="#048B6B", width=30, height=30)
         self.ResultsPage.results_tab.number_tag.grid(row=0, column=0, padx=5, pady=5)
-        self.ResultsPage.results_tab.results_subheading1 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="Description", font=customtkinter.CTkFont(size=16, weight="bold"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_subheading1 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text=top_results[0], font=customtkinter.CTkFont(size=16, weight="bold"), text_color="#08343C", anchor="w")
         self.ResultsPage.results_tab.results_subheading1.grid(row=0, column=1, sticky="nesw", padx=30, pady=10)
-        self.ResultsPage.results_tab.results_description = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="Description", font=customtkinter.CTkFont(size=12, weight="normal"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_description = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="Description text", font=customtkinter.CTkFont(size=12, weight="normal"), text_color="#08343C", anchor="w")
         self.ResultsPage.results_tab.results_description.grid(row=1, column=1, sticky="nesw", padx=30, pady=10)
-        self.ResultsPage.results_tab.results_subheading2 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="Description", font=customtkinter.CTkFont(size=14, weight="bold"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_subheading2 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="Characteristics", font=customtkinter.CTkFont(size=14, weight="bold"), text_color="#08343C", anchor="w")
         self.ResultsPage.results_tab.results_subheading2.grid(row=2, column=1, sticky="nesw", padx=30, pady=10)
-        self.ResultsPage.results_tab.results_characteristics = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="Description", font=customtkinter.CTkFont(size=12, weight="normal"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_characteristics = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text=self.get_good_char_text(self.good_char, top_results[0]), font=customtkinter.CTkFont(size=12, weight="normal"), text_color="#08343C", anchor="w")
         self.ResultsPage.results_tab.results_characteristics.grid(row=3, column=1, sticky="nesw", padx=30, pady=10)
 
         self.ResultsPage.prevnext_frame = customtkinter.CTkFrame(self.ResultsPage.content_frame)
@@ -916,7 +1008,6 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.ResultsPage.next_button.configure(state="disabled") # Can't go to the next question until we put in a radio option
 
         self.ResultsPage.pack(fill=customtkinter.BOTH)
-        #self.ResultsPage.grid(row=0, column=0, sticky="nesw")
 
     
 if __name__ == "__main__":
