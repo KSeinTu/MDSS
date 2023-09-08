@@ -847,12 +847,30 @@ class App(customtkinter.CTk): # Creating a class for the app
         
     def append_char(self, ind): # Takes an index and appends the corresponding statement into the good_characteristics of the appropriate technology
         match ind:
-            case 0:
+            case 0: #1 -- within 3m
                 self.good_char["BLE"].append("BLE locators can provide high accuracy positioning as required by this project.")
                 self.good_char["Wi-Fi BLE Hybrid"].append("The Wi-Fi Wireless Access Points coupled with BLE locators can provide high accuracy positioning as required by the project.")
                 self.bad_char["Wi-Fi"].append("The Wi-Fi Wireless Access Points may not be able to reliably provide the high level of accuracy required by the project.")
                 self.bad_char["RF"].append("The RF locators may not be able to reliably provide the high level of accuracy required by the project.")
                 self.bad_char["DECT"].append("The DECT locators may not be able to reliably provide the high level of accuracy required by the project.")
+            case 1: #1 -- 3-5m
+                self.good_char["BLE"].append("BLE locators can provide more than enough accuracy for this project's requirements.")
+                self.good_char["Wi-Fi BLE Hybrid"].append("The Wi-Fi Wireless Access Points coupled with BLE locators can provide high enough accuracy required by the project.")
+                self.good_char["Wi-Fi"].append("The Wi-Fi Wireless Access Points can provide high enough accuracy required by the project.")
+                self.bad_char["RF"].append("The RF locators may not be able to reliably provide the high level of accuracy required by the project.")
+                self.good_char["DECT"].append("The DECT locators will be able to provide a high enough accuracy to meet the project's accuracy requirements.")
+            case 3: #1 -- >5m
+                self.good_char["BLE"].append("BLE locators can provide more than enough accuracy for this project's requirements.")
+                self.good_char["Wi-Fi BLE Hybrid"].append("The Wi-Fi Wireless Access Points coupled with BLE locators can provide more than enough accuracy for this project's requirements.")
+                self.good_char["Wi-Fi"].append("The Wi-Fi Wireless Access Points can can provide more than enough accuracy for this project's requirements.")
+                self.good_char["RF"].append("The RF locators will be able to provide a high enough accuracy to meet the project's accuracy requirements.")
+                self.good_char["DECT"].append("The DECT locators will be able to provide a high enough accuracy to meet the project's accuracy requirements.")
+            case 4: #3b -- Voice-grade or data-grade
+                self.good_char["BLE"].append("The existing WLAN is below RTLS-grade, therefore it is generally more financially feasible to implement a separate bluetooth locator network for RTLS than to re-design the existing Wi-Fi Network to be of RTLS-grade. RTLS-grade networks require a device to see three WAPs at a minimum required criteria of signal strengths to accurately determine its location. Additionally, redesigning a WLAN is not a simple matter of installing additional WAPs, since this can cause interference issues between neighbouring WAPs.")
+                self.bad_char["Wi-Fi BLE Hybrid"].append("The existing WLAN is below RTLS-grade, but if there are only specific zones that are not RTLS-grade, then a small network of BLE locators can be installed to provide accurate RTLS in those areas. If majority or all the network is below RTLS-grade, this option will not be feasible.")
+                self.good_char["Wi-Fi"].append("")
+                self.good_char["RF"].append("")
+                self.good_char["DECT"].append("")
             case _:
                 print("<EXCEPTION REACHED IN APPEND_CHAR>")
 
