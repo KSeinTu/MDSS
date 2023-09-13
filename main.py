@@ -438,7 +438,7 @@ class App(customtkinter.CTk): # Creating a class for the app
                 question_topic = "Budget"
                 question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
             case "6": # Each case is one of the questions in the decision tree
-                question_text = "Is there a lot of existing cabling in the area of works?"
+                question_text = "Is there a lot of existing cabling or services infrastructure in the area of works?"
                 topic_text = "<question_topic for Case 1>"
                 question_topic = "Existing Cabling"
                 question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
@@ -526,12 +526,12 @@ class App(customtkinter.CTk): # Creating a class for the app
                 question_option3 = "DECT Handset"
                 question_option4 = "RF Handset"
                 num_options = 4        
-            case "8": # Each case is one of the questions in the decision tree
-                question_option1 = "Smartphone, Wi-Fi and bluetooth capable"
-                question_option2 = "Smartphone, Wi-Fi capable only"
-                question_option3 = "DECT Handset"
-                question_option4 = "RF Handset"
-                num_options = 4          
+            # case "8": # Each case is one of the questions in the decision tree
+            #     question_option1 = "Smartphone, Wi-Fi and bluetooth capable"
+            #     question_option2 = "Smartphone, Wi-Fi capable only"
+            #     question_option3 = "DECT Handset"
+            #     question_option4 = "RF Handset"
+            #     num_options = 4          
             case "9a": # Each case is one of the questions in the decision tree
                 question_option1 = "Thick walls"
                 question_option2 = "Thin walls or medium walls or not sure"
@@ -665,11 +665,11 @@ class App(customtkinter.CTk): # Creating a class for the app
             case "5b": 
                 next_question_index = "6"
             case "6": 
-                next_question_index = "8"
+                next_question_index = "7"
             case "7": 
                 next_question_index = "9a"
-            case "8": 
-                next_question_index = "9a"
+            # case "8": # Question removed due to redundancy
+            #     next_question_index = "9a"
             case "9a": 
                 next_question_index = "9b"
             case "9b": 
@@ -859,18 +859,20 @@ class App(customtkinter.CTk): # Creating a class for the app
                 self.good_char["Wi-Fi"].append("The Wi-Fi Wireless Access Points can provide high enough accuracy required by the project.")
                 self.bad_char["RF"].append("The RF locators may not be able to reliably provide the high level of accuracy required by the project.")
                 self.good_char["DECT"].append("The DECT locators will be able to provide a high enough accuracy to meet the project's accuracy requirements.")
-            case 3: #1 -- >5m
+            case 2: #1 -- >5m
                 self.good_char["BLE"].append("BLE locators can provide more than enough accuracy for this project's requirements.")
                 self.good_char["Wi-Fi BLE Hybrid"].append("The Wi-Fi Wireless Access Points coupled with BLE locators can provide more than enough accuracy for this project's requirements.")
                 self.good_char["Wi-Fi"].append("The Wi-Fi Wireless Access Points can can provide more than enough accuracy for this project's requirements.")
                 self.good_char["RF"].append("The RF locators will be able to provide a high enough accuracy to meet the project's accuracy requirements.")
                 self.good_char["DECT"].append("The DECT locators will be able to provide a high enough accuracy to meet the project's accuracy requirements.")
-            case 4: #3b -- Voice-grade or data-grade
+            case 3: #3b -- Voice-grade or data-grade
                 self.good_char["BLE"].append("The existing WLAN is below RTLS-grade, therefore it is generally more financially feasible to implement a separate bluetooth locator network for RTLS than to re-design the existing Wi-Fi Network to be of RTLS-grade. RTLS-grade networks require a device to see three WAPs at a minimum required criteria of signal strengths to accurately determine its location. Additionally, redesigning a WLAN is not a simple matter of installing additional WAPs, since this can cause interference issues between neighbouring WAPs.")
                 self.bad_char["Wi-Fi BLE Hybrid"].append("The existing WLAN is below RTLS-grade, but if there are only specific zones that are not RTLS-grade, then a small network of BLE locators can be installed to provide accurate RTLS in those areas. If majority or all the network is below RTLS-grade, this option will not be feasible.")
-                self.good_char["Wi-Fi"].append("")
-                self.good_char["RF"].append("")
-                self.good_char["DECT"].append("")
+                self.good_char["Wi-Fi"].append("The existing WLAN is below RTLS-grade, therefore to implement a Wi-Fi based RTLS, an entirely new WLAN will have to be designed and installed which will likely be of significantly higher cost than an alternative using a different locationing technology.")
+                # self.good_char["RF"].append("")
+                # self.good_char["DECT"].append("")
+            case 4: #3b -- RTLS Grade
+                self.bad_char["BLE"].append("The existing WLAN is RTLS-grade, so despite it being possible to implement a BLE locator network, it might be more sensible to utilise the existing RTLS-grade Wi-Fi network to provide location services for the Mobile Duress System.")
             case _:
                 print("<EXCEPTION REACHED IN APPEND_CHAR>")
 
