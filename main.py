@@ -26,6 +26,8 @@ class App(customtkinter.CTk): # Creating a class for the app
 
         customtkinter.set_default_color_theme("style/styles.json")
         self.company_logo = customtkinter.CTkImage(light_image=Image.open("img/AECOM_logo.png"), dark_image=Image.open("img/AECOM_logo.png"), size=(110,25))
+        self.char_dict = self.build_characteristics_dict()
+        #print(self.char_dict)
         self.build_welcome_page()
         #self.build_results_page() # Just for testing purposes
 
@@ -53,6 +55,16 @@ class App(customtkinter.CTk): # Creating a class for the app
             "RF": [],
             "DECT": []
         }
+
+    def build_characteristics_dict(self): # Function to read the external file and build the database of characteristics in a python dictionary
+        filename = "char_src.csv" # Define the filename of the source file of the dictionary
+        char_dict = {} # Characteristic dictionary initialisation
+        with open(filename) as textfile:
+            i = 0 # Create an interator
+            for line in textfile:
+                char_dict[i] = line # make a new key-value pair with each line in the database
+                i+=1
+        return char_dict
 
     def build_welcome_page(self):
 
@@ -292,7 +304,7 @@ class App(customtkinter.CTk): # Creating a class for the app
         return (self.current_question != "1")
 
     def callback_next_button(self):
-        self.increase_scores(self.current_question, self.Question1Page.radio_option.get()) # adjust the scores
+        #self.increase_scores(self.current_question, self.Question1Page.radio_option.get()) # adjust the scores
         # Change the current question we are on
         self.changeQuestion(self.current_question, 1)
         
@@ -848,40 +860,92 @@ class App(customtkinter.CTk): # Creating a class for the app
     def append_char(self, ind): # Takes an index and appends the corresponding statement into the good_characteristics of the appropriate technology
         match ind:
             case 0: #1 -- within 3m
-                self.good_char["BLE"].append("BLE locators can provide high accuracy positioning as required by this project.")
-                self.good_char["Wi-Fi BLE Hybrid"].append("The Wi-Fi Wireless Access Points coupled with BLE locators can provide high accuracy positioning as required by the project.")
-                self.bad_char["Wi-Fi"].append("The Wi-Fi Wireless Access Points may not be able to reliably provide the high level of accuracy required by the project.")
-                self.bad_char["RF"].append("The RF locators may not be able to reliably provide the high level of accuracy required by the project.")
-                self.bad_char["DECT"].append("The DECT locators may not be able to reliably provide the high level of accuracy required by the project.")
+                self.good_char["BLE"].append(self.char_dict[0])
+                self.good_char["Wi-Fi BLE Hybrid"].append(self.char_dict[1])
+                self.bad_char["Wi-Fi"].append(self.char_dict[2])
+                self.bad_char["RF"].append(self.char_dict[3])
+                self.bad_char["DECT"].append(self.char_dict[4])
             case 1: #1 -- 3-5m
-                self.good_char["BLE"].append("BLE locators can provide more than enough accuracy for this project's requirements.")
-                self.good_char["Wi-Fi BLE Hybrid"].append("The Wi-Fi Wireless Access Points coupled with BLE locators can provide high enough accuracy required by the project.")
-                self.good_char["Wi-Fi"].append("The Wi-Fi Wireless Access Points can provide high enough accuracy required by the project.")
-                self.bad_char["RF"].append("The RF locators may not be able to reliably provide the high level of accuracy required by the project.")
-                self.good_char["DECT"].append("The DECT locators will be able to provide a high enough accuracy to meet the project's accuracy requirements.")
+                self.good_char["BLE"].append(self.char_dict[5])
+                self.good_char["Wi-Fi BLE Hybrid"].append(self.char_dict[6])
+                self.good_char["Wi-Fi"].append(self.char_dict[7])
+                self.bad_char["RF"].append(self.char_dict[8])
+                self.good_char["DECT"].append(self.char_dict[9])
             case 2: #1 -- >5m
-                self.good_char["BLE"].append("BLE locators can provide more than enough accuracy for this project's requirements.")
-                self.good_char["Wi-Fi BLE Hybrid"].append("The Wi-Fi Wireless Access Points coupled with BLE locators can provide more than enough accuracy for this project's requirements.")
-                self.good_char["Wi-Fi"].append("The Wi-Fi Wireless Access Points can can provide more than enough accuracy for this project's requirements.")
-                self.good_char["RF"].append("The RF locators will be able to provide a high enough accuracy to meet the project's accuracy requirements.")
-                self.good_char["DECT"].append("The DECT locators will be able to provide a high enough accuracy to meet the project's accuracy requirements.")
+                self.good_char["BLE"].append(self.char_dict[10])
+                self.good_char["Wi-Fi BLE Hybrid"].append(self.char_dict[11])
+                self.good_char["Wi-Fi"].append(self.char_dict[12])
+                self.good_char["RF"].append(self.char_dict[13])
+                self.good_char["DECT"].append(self.char_dict[14])
             case 3: #3b -- Voice-grade or data-grade
-                self.good_char["BLE"].append("The existing WLAN is below RTLS-grade, therefore it is generally more financially feasible to implement a separate bluetooth locator network for RTLS than to re-design the existing Wi-Fi Network to be of RTLS-grade. RTLS-grade networks require a device to see three WAPs at a minimum required criteria of signal strengths to accurately determine its location. Additionally, redesigning a WLAN is not a simple matter of installing additional WAPs, since this can cause interference issues between neighbouring WAPs.")
-                self.bad_char["Wi-Fi BLE Hybrid"].append("The existing WLAN is below RTLS-grade, but if there are only specific zones that are not RTLS-grade, then a small network of BLE locators can be installed to provide accurate RTLS in those areas. If majority or all the network is below RTLS-grade, this option will not be feasible.")
-                self.good_char["Wi-Fi"].append("The existing WLAN is below RTLS-grade, therefore to implement a Wi-Fi based RTLS, an entirely new WLAN will have to be designed and installed which will likely be of significantly higher cost than an alternative using a different locationing technology.")
-                # self.good_char["RF"].append("")
-                # self.good_char["DECT"].append("")
+                self.good_char["BLE"].append(self.char_dict[15])
+                self.bad_char["Wi-Fi BLE Hybrid"].append(self.char_dict[16])
+                self.good_char["Wi-Fi"].append(self.char_dict[17])
             case 4: #3b -- RTLS Grade
-                self.bad_char["BLE"].append("The existing WLAN is RTLS-grade, so despite it being possible to implement a BLE locator network, it might be more sensible to utilise the existing RTLS-grade Wi-Fi network to provide location services for the Mobile Duress System.")
+                self.bad_char["BLE"].append(self.char_dict[18])
+                self.good_char["Wi-Fi BLE Hybrid"].append(self.char_dict[19])
+                self.good_char["Wi-Fi"].append(self.char_dict[20])
+                self.bad_char["RF"].append(self.char_dict[21])
+                self.bad_char["DECT"].append(self.char_dict[22])
+            case 5: #3b -- RTLS Grade
+                self.good_char["BLE"].append(self.char_dict[23])
+                self.good_char["Wi-Fi BLE Hybrid"].append(self.char_dict[24])
+                self.bad_char["Wi-Fi"].append(self.char_dict[25])
+                self.good_char["RF"].append(self.char_dict[26])
+                self.good_char["DECT"].append(self.char_dict[27])
+            case 6: #3b -- RTLS Grade
+                self.good_char["BLE"].append(self.char_dict[28])
+                self.good_char["Wi-Fi BLE Hybrid"].append(self.char_dict[29])
+                self.bad_char["Wi-Fi"].append(self.char_dict[30])
+                self.good_char["RF"].append(self.char_dict[31])
+                self.good_char["DECT"].append(self.char_dict[32])
+            case 7: #3b -- RTLS Grade
+                self.good_char["BLE"].append(self.char_dict[33])
+                self.good_char["Wi-Fi BLE Hybrid"].append(self.char_dict[34])
+                self.good_char["Wi-Fi"].append(self.char_dict[35])
+                self.bad_char["RF"].append(self.char_dict[36])
+                self.bad_char["DECT"].append(self.char_dict[37])
+            case 8: #3b -- RTLS Grade
+                self.good_char["BLE"].append(self.char_dict[38])
+                self.bad_char["Wi-Fi BLE Hybrid"].append(self.char_dict[39])
+                self.bad_char["Wi-Fi"].append(self.char_dict[40])
+                self.good_char["RF"].append(self.char_dict[41])
+                self.bad_char["DECT"].append(self.char_dict[42])
+            case 9: #3b -- RTLS Grade
+                self.good_char["BLE"].append(self.char_dict[43])
+                self.good_char["Wi-Fi BLE Hybrid"].append(self.char_dict[44])
+                self.good_char["Wi-Fi"].append(self.char_dict[45])
+            case 10: #3b -- RTLS Grade
+                self.good_char["Wi-Fi"].append(self.char_dict[46])
+                self.good_char["DECT"].append(self.char_dict[47])
+            case 11: #3b -- RTLS Grade
+                self.good_char["RF"].append(self.char_dict[48])
+            case 12: #3b -- RTLS Grade
+                self.good_char["BLE"].append(self.char_dict[49])
+                self.bad_char["Wi-Fi"].append(self.char_dict[50])
+                self.good_char["RF"].append(self.char_dict[51])
+            case 13: #3b -- RTLS Grade
+                self.bad_char["Wi-Fi BLE Hybrid"].append(self.char_dict[52])
+                self.bad_char["Wi-Fi"].append(self.char_dict[53])
+            case 14: #3b -- RTLS Grade
+                self.bad_char["Wi-Fi BLE Hybrid"].append(self.char_dict[54])
+                self.bad_char["Wi-Fi"].append(self.char_dict[55])
+            case 15: #3b -- RTLS Grade
+                self.bad_char["RF"].append(self.char_dict[56])
+            case 16: #3b -- RTLS Grade
+                self.bad_char["Wi-Fi"].append(self.char_dict[57])
+                self.bad_char["Wi-Fi BLE Hybrid"].append(self.char_dict[58])
             case _:
                 print("<EXCEPTION REACHED IN APPEND_CHAR>")
 
-    def get_good_char_text(self, good_char_dict, dict_key): # To be used as the text for the label that sits on the results page to highlight the good characteritics
+    def get_char_text(self, good_char_dict, bad_char_dict, dict_key): # To be used as the text for the label that sits on the results page to highlight all of the characteristics
         # good_char_dict is the python dictionary that holds the strings of all the good characteristics of each technology based on the decisions that the user made throughout
         # dict_key is the name of the technology about which the good characteristics are trying to be extracted
         out_string = ""
-        for characteristic in good_char_dict[dict_key]: # For each good characteristic that has been stored
-            out_string += "\n+ "+characteristic # Add this to the final output string on a new line
+        for good_char in good_char_dict[dict_key]: # For each good characteristic that has been stored
+            out_string += "\n+ "+good_char # Add this to the final output string on a new line
+        for bad_char in bad_char_dict[dict_key]:
+            out_string += "\n+ "+ bad_char # Add this to the final output string on a new line
         
         return out_string
 
@@ -1010,7 +1074,7 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.ResultsPage.results_tab.results_description.grid(row=1, column=1, sticky="nesw", padx=30, pady=10)
         self.ResultsPage.results_tab.results_subheading2 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="Characteristics", font=customtkinter.CTkFont(size=14, weight="bold"), text_color="#08343C", anchor="w")
         self.ResultsPage.results_tab.results_subheading2.grid(row=2, column=1, sticky="nesw", padx=30, pady=10)
-        self.ResultsPage.results_tab.results_characteristics = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text=self.get_good_char_text(self.good_char, top_results[0]), font=customtkinter.CTkFont(size=12, weight="normal"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_characteristics = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text=self.get_char_text(self.good_char, self.bad_char, top_results[0]), font=customtkinter.CTkFont(size=12, weight="normal"), text_color="#08343C", anchor="w")
         self.ResultsPage.results_tab.results_characteristics.grid(row=3, column=1, sticky="nesw", padx=30, pady=10)
 
         self.ResultsPage.prevnext_frame = customtkinter.CTkFrame(self.ResultsPage.content_frame)
@@ -1020,10 +1084,10 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.ResultsPage.prevnext_frame.grid_rowconfigure(0,weight=1)
 
         # Creating Previous and next buttons at the bottom of the page
-        self.ResultsPage.prev_button = customtkinter.CTkButton(self.ResultsPage.prevnext_frame, command=self.callback_prev_button, text='Save', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        self.ResultsPage.prev_button = customtkinter.CTkButton(self.ResultsPage.prevnext_frame, text='Save', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.ResultsPage.prev_button.grid(row=2, column=2)
         self.ResultsPage.prev_button.configure(state="disabled") # Disable the previous question button since we are on the first question
-        self.ResultsPage.next_button = customtkinter.CTkButton(self.ResultsPage.prevnext_frame, command=self.callback_next_button, text='Print to .docx', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        self.ResultsPage.next_button = customtkinter.CTkButton(self.ResultsPage.prevnext_frame, text='Print to .docx', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.ResultsPage.next_button.grid(row=2, column=3)
         self.ResultsPage.next_button.configure(state="disabled") # Can't go to the next question until we put in a radio option
 
