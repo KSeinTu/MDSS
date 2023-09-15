@@ -33,7 +33,8 @@ class App(customtkinter.CTk): # Creating a class for the app
 
     def reset_variables(self):
         self.current_question = "0" # Stores the string that indicates which question that the user is currently on ("0" refers to the welcome page)
-        self.question_history = ["0"] # array that stores the history of questions that the user has been to
+        self.question_history = [] # array that stores the history of questions that the user has been to
+        self.choice_history = [] # array that stores the history of the user's choice at each question, this will be used to generate the characteristics displayed on the results page and the scoring performed to generate the top choice.
         self.scores = { # Python dictionary to keep track of the scores
             "BLE": 0,
             "Wi-Fi BLE Hybrid": 0,
@@ -702,19 +703,22 @@ class App(customtkinter.CTk): # Creating a class for the app
         # Direction takes values -1 or 1: -1 is to go to the previous question, +1 is to go to the next question
         # The next question that is selected is based on the flow of the decision tree, as documented in the flow chart
         # -- Note that destination (dest) question in this case could also refer to the previous question if we are trying to go to the previous question
-        print("Question History: " + str(self.question_history))
+        
         # By this stage we should have already validated whether the user is able to go back to a previous question or go to the next one
         if direction == 1: # Going to the next question
             print("Going to next question")
             dest_question_index = self.get_next_question_index(self.Question1Page.radio_option.get(), question_index) # Get the index of the next question based on the user's response # gets the text associated with each of the questions
-            self.question_history.append(dest_question_index) # Add the new question to the question_history
+            self.choice_history.append(self.Question1Page.radio_option.get()) # When the question changes, append the selected radio button choice to choice_history
             if dest_question_index == "Results": # If we have finished all the questions
                 print("Final question finished, going to results page...")
                 self.build_results_page()
+            else:
+                self.question_history.append(dest_question_index) # Add the new question to the question_history
         elif direction == -1: # Going to the previous question
             print("Going to previous question")
             dest_question_index = self.question_history[-2] # get second last item from question history
             self.question_history.pop() # Remove the most recent question from the question history
+            self.choice_history.pop() # Remove the most recent answer choice from choice_history
 
         if dest_question_index != "Results":
             # Changes to the text associated with the question
@@ -733,110 +737,136 @@ class App(customtkinter.CTk): # Creating a class for the app
         
             # Changes the options associated with the question
             self.generate_radio_buttons(dest_question_index)
-        
+            
+        print("Question History: " + str(self.question_history))
+        print("Choice History: "+str(self.choice_history))
+    
+    def generate_scores(self, choice_history, question_history): # Method that calls increase_scores to perform the scoring and characteristic generation based on question_history and choice_history
+        i = 0 # iterator to store which question we are up to
+        for question in question_history: # for each question in the question history
+            self.increase_scores(question, choice_history[i]) # Increase the scores according to which option was selected
+            i += 1 # increment the iterate as we move to the next question
+
     def increase_scores(self, question_index, radio_button_value): # Increase the score of particular locating technology based on which question the user is on and what option they have selected
         print("Increase scores, question_index:",question_index, "radio_button_value", radio_button_value)
         match question_index: #Switch case statement to get the text for each of the options within the question            
             case "1":
                 match radio_button_value: # Use the value of the radio button to determine which question the program is supposed to go to next
-                    case 1:
+                    case 1: # Within 3m
                         self.scores["BLE"] += 1
                         self.scores["Wi-Fi BLE Hybrid"] += 1
                         self.scores["Wi-Fi"] -= 1
                         self.scores["RF"] -= 1
-                        self.append_char(0) # add the characteristics that correspond to this option
-                    case 2:
+                        self.append_char(0) # append the characteristics lists according to the option selected
+                    case 2: # 3-5m
                         self.scores["Wi-Fi"] += 1
                         self.scores["RF"] -= 1
                         self.scores["DECT"] -= 1
-                    case 3:
+                        self.append_char(1)
+                    case 3: # >5m
                         self.scores["RF"] += 1
                         self.scores["DECT"] += 1
+                        self.append_char(2)
             case "3b": 
                 match radio_button_value: 
-                    case 1:
+                    case 1: # Voice-grade or data-grade
                         self.scores["BLE"] += 1
                         self.scores["RF"] += 1
                         self.scores["Wi-Fi"] -= 2
                         self.scores["Wi-Fi BLE Hybrid"] -= 2
-                    case 2:
+                        self.append_char(3)
+                    case 2: # RTLS-grade
                         self.scores["Wi-Fi BLE Hybrid"] += 1
                         self.scores["Wi-Fi"] += 2
+                        self.append_char(4)
             case "4": 
                 match radio_button_value: 
-                    case 1:
+                    case 1: # Low-medium
                         self.scores["BLE"] += 3
                         self.scores["RF"] += 3
                         self.scores["DECT"] += 3
                         self.scores["Wi-Fi"] -= 1
+                        self.append_char(5)
             case "5a": 
                 match radio_button_value: 
-                    case 1:
+                    case 1: # Low-medium
                         self.scores["BLE"] += 3
                         self.scores["RF"] += 3
                         self.scores["DECT"] += 3
                         self.scores["Wi-Fi"] -= 1
+                        self.append_char(6)
             case "5b": 
                 match radio_button_value: 
-                    case 1:
+                    case 1: # Low-medium
                         self.scores["BLE"] += 2
                         self.scores["RF"] += 2
                         self.scores["Wi-Fi"] += 4
                         self.scores["Wi-Fi BLE Hybrid"] += 3
                         self.scores["DECT"] += 2
+                        self.append_char(7)
             case "6": 
                 match radio_button_value: 
-                    case 1:
+                    case 1: # Yes
                         self.scores["BLE"] += 2
                         self.scores["RF"] += 1
+                        self.append_char(8)
             case "7": 
                 match radio_button_value: 
-                    case 1:
+                    case 1: # Smartphone, Wi-Fi and bluetooth capable
                         self.scores["BLE"] += 2
                         self.scores["Wi-Fi BLE Hybrid"] += 2
                         self.scores["Wi-Fi"] += 1
-                    case 2:
+                        self.append_char(9)
+                    case 2: # Smartphone, Wi-Fi capable only
                         self.scores["Wi-Fi"] += 2
-                    case 3:
+                        self.append_char(17)
+                    case 3: # DECT
                         self.scores["DECT"] += 2
-                    case 4:
+                        self.append_char(10)
+                    case 4: # RF
                         self.scores["RF"] += 2
-            case "8": 
-               match radio_button_value: 
-                    case 1:
-                        self.scores["BLE"] += 2
-                        self.scores["Wi-Fi BLE Hybrid"] += 2
-                    case 2:
-                       self.scores["Wi-Fi"] += 2
-                    case 3:
-                       self.scores["DECT"] += 2
-                    case 4:
-                       self.scores["RF"] += 2
+                        self.append_char(11)
+            # case "8": # QUESTION REMOVED
+            #    match radio_button_value: 
+            #         case 1:
+            #             self.scores["BLE"] += 2
+            #             self.scores["Wi-Fi BLE Hybrid"] += 2
+            #         case 2:
+            #            self.scores["Wi-Fi"] += 2
+            #         case 3:
+            #            self.scores["DECT"] += 2
+            #         case 4:
+            #            self.scores["RF"] += 2
             case "9a": 
                 match radio_button_value: 
-                    case 1:
+                    case 1: # Thick walls
                         self.scores["BLE"] += 1
                         self.scores["RF"] += 1
                         self.scores["Wi-Fi"] -= 1
+                        self.append_char(12)
             case "9b": 
                 match radio_button_value: 
-                    case 1:
+                    case 1: # Yes
                         self.scores["Wi-Fi"] -= 2
                         self.scores["Wi-Fi BLE Hybrid"] -= 1
+                        self.append_char(13)
             case "9c":
                 match radio_button_value: 
-                    case 1:
+                    case 1: # Yes
                         self.scores["Wi-Fi"] -= 2
                         self.scores["Wi-Fi BLE Hybrid"] -= 2
+                        self.append_char(14)
             case "9d":
                 match radio_button_value: 
-                    case 1:
+                    case 1: # Yes
                         self.scores["RF"] -= 2
+                        self.append_char(15)
             case "9e": 
                 match radio_button_value: 
-                    case 1:
+                    case 1: # Yes
                         self.scores["Wi-Fi"] -= 2
                         self.scores["Wi-Fi BLE Hybrid"] -= 2
+                        self.append_char(16)
             case _:
                 print("<EXCEPTION REACHED -- scores not adjusted, invalid question index>")
         print(self.scores)
@@ -857,8 +887,8 @@ class App(customtkinter.CTk): # Creating a class for the app
     
         return first_key, first_score, second_key, second_score, third_key, third_score
         
-    def append_char(self, ind): # Takes an index and appends the corresponding statement into the good_characteristics of the appropriate technology
-        match ind:
+    def append_char(self, case_id): # Takes an index and appends the corresponding statement into the good_characteristics of the appropriate technology
+        match case_id:
             case 0: #1 -- within 3m
                 self.good_char["BLE"].append(self.char_dict[0])
                 self.good_char["Wi-Fi BLE Hybrid"].append(self.char_dict[1])
@@ -887,52 +917,55 @@ class App(customtkinter.CTk): # Creating a class for the app
                 self.good_char["Wi-Fi"].append(self.char_dict[20])
                 self.bad_char["RF"].append(self.char_dict[21])
                 self.bad_char["DECT"].append(self.char_dict[22])
-            case 5: #3b -- RTLS Grade
+            case 5: #4 -- Low-medium
                 self.good_char["BLE"].append(self.char_dict[23])
                 self.good_char["Wi-Fi BLE Hybrid"].append(self.char_dict[24])
                 self.bad_char["Wi-Fi"].append(self.char_dict[25])
                 self.good_char["RF"].append(self.char_dict[26])
                 self.good_char["DECT"].append(self.char_dict[27])
-            case 6: #3b -- RTLS Grade
+            case 6: #5a -- Low-medium
                 self.good_char["BLE"].append(self.char_dict[28])
                 self.good_char["Wi-Fi BLE Hybrid"].append(self.char_dict[29])
                 self.bad_char["Wi-Fi"].append(self.char_dict[30])
                 self.good_char["RF"].append(self.char_dict[31])
                 self.good_char["DECT"].append(self.char_dict[32])
-            case 7: #3b -- RTLS Grade
+            case 7: #5b -- Low-medium
                 self.good_char["BLE"].append(self.char_dict[33])
                 self.good_char["Wi-Fi BLE Hybrid"].append(self.char_dict[34])
                 self.good_char["Wi-Fi"].append(self.char_dict[35])
                 self.bad_char["RF"].append(self.char_dict[36])
                 self.bad_char["DECT"].append(self.char_dict[37])
-            case 8: #3b -- RTLS Grade
+            case 8: #6 -- yes
                 self.good_char["BLE"].append(self.char_dict[38])
                 self.bad_char["Wi-Fi BLE Hybrid"].append(self.char_dict[39])
                 self.bad_char["Wi-Fi"].append(self.char_dict[40])
                 self.good_char["RF"].append(self.char_dict[41])
                 self.bad_char["DECT"].append(self.char_dict[42])
-            case 9: #3b -- RTLS Grade
+            case 9: #7 -- Smartphone, Wi-Fi and bluetooth capable
                 self.good_char["BLE"].append(self.char_dict[43])
                 self.good_char["Wi-Fi BLE Hybrid"].append(self.char_dict[44])
                 self.good_char["Wi-Fi"].append(self.char_dict[45])
-            case 10: #3b -- RTLS Grade
+            case 17: #7 -- Smartphone, Wi-Fi capable only
                 self.good_char["Wi-Fi"].append(self.char_dict[46])
                 self.good_char["DECT"].append(self.char_dict[47])
-            case 11: #3b -- RTLS Grade
+            case 10: #7 -- DECT
+                self.good_char["Wi-Fi"].append(self.char_dict[46])
+                self.good_char["DECT"].append(self.char_dict[47])
+            case 11: #11 -- RF
                 self.good_char["RF"].append(self.char_dict[48])
-            case 12: #3b -- RTLS Grade
+            case 12: #9a -- Thick walls
                 self.good_char["BLE"].append(self.char_dict[49])
                 self.bad_char["Wi-Fi"].append(self.char_dict[50])
                 self.good_char["RF"].append(self.char_dict[51])
-            case 13: #3b -- RTLS Grade
+            case 13: #9b -- yes
                 self.bad_char["Wi-Fi BLE Hybrid"].append(self.char_dict[52])
                 self.bad_char["Wi-Fi"].append(self.char_dict[53])
-            case 14: #3b -- RTLS Grade
+            case 14: #9c -- yes
                 self.bad_char["Wi-Fi BLE Hybrid"].append(self.char_dict[54])
                 self.bad_char["Wi-Fi"].append(self.char_dict[55])
-            case 15: #3b -- RTLS Grade
+            case 15: #9d -- yes
                 self.bad_char["RF"].append(self.char_dict[56])
-            case 16: #3b -- RTLS Grade
+            case 16: #9e -- yes
                 self.bad_char["Wi-Fi"].append(self.char_dict[57])
                 self.bad_char["Wi-Fi BLE Hybrid"].append(self.char_dict[58])
             case _:
@@ -978,6 +1011,8 @@ class App(customtkinter.CTk): # Creating a class for the app
             self.Question1Page.destroy()
         except AttributeError:
             print("QuestionPage does not exist")
+
+        self.generate_scores(self.choice_history, self.question_history) # use the question and choice history to generate the results.
 
         self.ResultsPage = customtkinter.CTkFrame(self, fg_color="white", width=self.WIDTH, height=self.HEIGHT) # Creating frame to span the whole page
         self.ResultsPage.grid_columnconfigure((0,5),weight=1)
