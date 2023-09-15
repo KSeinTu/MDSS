@@ -2,6 +2,7 @@ import customtkinter
 from PIL import Image
 import os
 import copy
+import textwrap
 
 customtkinter.set_appearance_mode("light")
 customtkinter.set_default_color_theme("green")
@@ -63,7 +64,7 @@ class App(customtkinter.CTk): # Creating a class for the app
         with open(filename) as textfile:
             i = 0 # Create an interator
             for line in textfile:
-                char_dict[i] = line # make a new key-value pair with each line in the database
+                char_dict[i] = line[3:-1] # make a new key-value pair with each line in the database
                 i+=1
         return char_dict
 
@@ -980,6 +981,8 @@ class App(customtkinter.CTk): # Creating a class for the app
         for bad_char in bad_char_dict[dict_key]:
             out_string += "\n+ "+ bad_char # Add this to the final output string on a new line
         
+        #wrapped_text = "\n".join(textwrap.fill(line, width=200) for line in out_string.splitlines())
+
         return out_string
 
     def get_tech_desc(dict_key): # Method to get the strings for the general descriptions of the technologies
@@ -1017,6 +1020,8 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.ResultsPage = customtkinter.CTkFrame(self, fg_color="white", width=self.WIDTH, height=self.HEIGHT) # Creating frame to span the whole page
         self.ResultsPage.grid_columnconfigure((0,5),weight=1)
         self.ResultsPage.grid_columnconfigure((1,2,3,4), weight=8)
+        self.ResultsPage.grid_rowconfigure((0,1), weight=1)
+        self.ResultsPage.grid_rowconfigure(3, weight=5)
 
         # Handling the results from the questions
         top_results = self.get_top_results(self.scores) # Returns a list of first, second, third keys and scores based on the final scores
@@ -1055,7 +1060,7 @@ class App(customtkinter.CTk): # Creating a class for the app
         # Creating a frame to hold all of the content frames in the white space
         self.content_height=self.HEIGHT-self.ResultsPage.buttonbar_frame.cget("height")-self.ResultsPage.logo_frame.cget("height")-100
         self.ResultsPage.content_frame = customtkinter.CTkFrame(self.ResultsPage, fg_color="white", width=self.WIDTH, height=self.content_height) 
-        self.ResultsPage.content_frame.grid(row=2, column=1, rowspan=4, columnspan=4, sticky="nsew", padx=20, pady=10)
+        self.ResultsPage.content_frame.grid(row=2, column=1, rowspan=1, columnspan=4, sticky="nsew", padx=20, pady=10)
         self.ResultsPage.content_frame.grid_rowconfigure(0,weight = 1)
         self.ResultsPage.content_frame.grid_rowconfigure(1,weight = 3)
         self.ResultsPage.content_frame.grid_rowconfigure(2,weight = 10)
@@ -1103,13 +1108,13 @@ class App(customtkinter.CTk): # Creating a class for the app
         #Putting widgets inside the first tab
         self.ResultsPage.results_tab.number_tag = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="1", font=customtkinter.CTkFont(size=14, weight="bold"), text_color="white", corner_radius=500, fg_color="#048B6B", width=30, height=30)
         self.ResultsPage.results_tab.number_tag.grid(row=0, column=0, padx=5, pady=5)
-        self.ResultsPage.results_tab.results_subheading1 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text=top_results[0], font=customtkinter.CTkFont(size=16, weight="bold"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_subheading1 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text=top_results[0], font=customtkinter.CTkFont(size=24, weight="bold"), text_color="#08343C", anchor="w")
         self.ResultsPage.results_tab.results_subheading1.grid(row=0, column=1, sticky="nesw", padx=30, pady=10)
-        self.ResultsPage.results_tab.results_description = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="Description text", font=customtkinter.CTkFont(size=12, weight="normal"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_description = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="Description text", font=customtkinter.CTkFont(size=16, weight="normal"), text_color="#08343C", anchor="w")
         self.ResultsPage.results_tab.results_description.grid(row=1, column=1, sticky="nesw", padx=30, pady=10)
-        self.ResultsPage.results_tab.results_subheading2 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="Characteristics", font=customtkinter.CTkFont(size=14, weight="bold"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_subheading2 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="Characteristics", font=customtkinter.CTkFont(size=20, weight="bold"), text_color="#08343C", anchor="w")
         self.ResultsPage.results_tab.results_subheading2.grid(row=2, column=1, sticky="nesw", padx=30, pady=10)
-        self.ResultsPage.results_tab.results_characteristics = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text=self.get_char_text(self.good_char, self.bad_char, top_results[0]), font=customtkinter.CTkFont(size=12, weight="normal"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_characteristics = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text=self.get_char_text(self.good_char, self.bad_char, top_results[0]), font=customtkinter.CTkFont(size=16, weight="normal"), text_color="#08343C", anchor="w", justify="left", fg_color = "red", wraplength=1000)
         self.ResultsPage.results_tab.results_characteristics.grid(row=3, column=1, sticky="nesw", padx=30, pady=10)
 
         self.ResultsPage.prevnext_frame = customtkinter.CTkFrame(self.ResultsPage.content_frame)
