@@ -2,7 +2,10 @@ import customtkinter
 from PIL import Image
 import os
 import copy
-import textwrap
+import csv
+from docx import Document # for writing the word document output
+from docx.shared import Inches # for writing the word document output
+
 
 customtkinter.set_appearance_mode("light")
 customtkinter.set_default_color_theme("green")
@@ -28,7 +31,10 @@ class App(customtkinter.CTk): # Creating a class for the app
         customtkinter.set_default_color_theme("style/styles.json")
         self.company_logo = customtkinter.CTkImage(light_image=Image.open("img/AECOM_logo.png"), dark_image=Image.open("img/AECOM_logo.png"), size=(110,25))
         self.char_dict = self.build_characteristics_dict()
-        #print(self.char_dict)
+        # Build the dictionaries for getting the text that sits on the question pages.
+        self.question_topic_dict = self.build_question_topic_dict()
+        self.question_text_dict = self.build_question_text_dict()
+        self.question_desc_dict = self.build_question_desc_dict()
         self.build_welcome_page()
         #self.build_results_page() # Just for testing purposes
 
@@ -61,13 +67,43 @@ class App(customtkinter.CTk): # Creating a class for the app
     def build_characteristics_dict(self): # Function to read the external file and build the database of characteristics in a python dictionary
         filename = "char_src.csv" # Define the filename of the source file of the dictionary
         char_dict = {} # Characteristic dictionary initialisation
-        with open(filename) as textfile:
-            i = 0 # Create an interator
-            for line in textfile:
-                char_dict[i] = line[3:-1] # make a new key-value pair with each line in the database
-                i+=1
+        with open(filename, 'r') as csvfile:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                if len(row) >= 2: # Validate that the file has at least 2 columns
+                    char_dict[int(row[0])] = row[1] # make a new key-value pair in the database with the second col of the CSV file. The key is the first col which correponds to the 'statement ID'
         return char_dict
 
+    def build_question_topic_dict(self): # Function to read the external file and build a database of the text that is used for the questions
+        filename = "question_src.csv" # Define the filename of the source file of the dictionary
+        question_topic_dict = {} # Characteristic dictionary initialisation
+        with open(filename, 'r') as csvfile:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                if len(row) >= 2: # Validate that the file has at least 2 columns
+                    question_topic_dict[row[0]] = row[1] # make a new key-value pair in the database with the second col of the CSV file. The key is the first col which correponds to the 'Question ID'
+        return question_topic_dict
+    
+    def build_question_text_dict(self): # Function to read the external file and build a database of the text that is used for the questions
+        filename = "question_src.csv" # Define the filename of the source file of the dictionary
+        question_text_dict = {} # Characteristic dictionary initialisation
+        with open(filename, 'r') as csvfile:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                if len(row) >= 2: # Validate that the file has at least 2 columns
+                    question_text_dict[row[0]] = row[2] # make a new key-value pair in the database with the second col of the CSV file. The key is the first col which correponds to the 'Question ID'
+        return question_text_dict
+    
+    def build_question_desc_dict(self): # Function to read the external file and build a database of the text that is used for the questions
+        filename = "question_src.csv" # Define the filename of the source file of the dictionary
+        question_desc_dict = {} # Characteristic dictionary initialisation
+        with open(filename, 'r') as csvfile:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                if len(row) >= 2: # Validate that the file has at least 2 columns
+                    question_desc_dict[row[0]] = row[3] # make a new key-value pair in the database with the second col of the CSV file. The key is the first col which correponds to the 'Question ID'
+        return question_desc_dict
+    
     def build_welcome_page(self):
 
         # Initialising variables that will be used throughout the program logic
@@ -268,11 +304,11 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.Question1Page.user_manual_button.pack(padx=5, pady=10)
 
         # Creating text labels in main body
-        self.Question1Page.question_title = customtkinter.CTkLabel(self.Question1Page.content_frame, text=self.get_question_text("1")[0], font=customtkinter.CTkFont(size=24, weight="bold"), text_color="#08343C", anchor="w")
+        self.Question1Page.question_title = customtkinter.CTkLabel(self.Question1Page.content_frame, text=self.get_question_text("1")[0], font=customtkinter.CTkFont(size=24, weight="bold"), text_color="#08343C", anchor="w", wraplength=1500, justify="left")
         self.Question1Page.question_title.grid(row=0, column=0, columnspan=1, sticky="nsew", padx=20, pady=20)
-        self.Question1Page.question_desc = customtkinter.CTkLabel(self.Question1Page.content_frame, text=self.get_question_text("1")[1], font=customtkinter.CTkFont(size=16, weight="bold"), text_color="#08343C", anchor="w")
+        self.Question1Page.question_desc = customtkinter.CTkLabel(self.Question1Page.content_frame, text=self.get_question_text("1")[1], font=customtkinter.CTkFont(size=16, weight="normal"), text_color="#08343C", anchor="w", wraplength=1500, justify="left")
         self.Question1Page.question_desc.grid(row=1, column=0, columnspan=1, sticky="nsew", padx=20, pady=20)
-        self.Question1Page.question_text = customtkinter.CTkLabel(self.Question1Page.content_frame, text=self.get_question_text("1")[2], font=customtkinter.CTkFont(size=16, weight="bold"), text_color="#08343C", anchor="w")
+        self.Question1Page.question_text = customtkinter.CTkLabel(self.Question1Page.content_frame, text=self.get_question_text("1")[2], font=customtkinter.CTkFont(size=16, weight="bold"), text_color="#08343C", anchor="w", wraplength=1500, justify="left")
         self.Question1Page.question_text.grid(row=2, column=0, columnspan=1, sticky="nsew", padx=20, pady=20)
         self.Question1Page.option_frame = customtkinter.CTkFrame(self.Question1Page.content_frame, width=100, height=200)
         self.Question1Page.option_frame.grid(row=3, column=0, columnspan=1, sticky="nsew", padx=20, pady=20)
@@ -414,90 +450,97 @@ class App(customtkinter.CTk): # Creating a class for the app
     def load_project_button_event(self):
         print("test")
 
-    def get_question_text(self, question_index): # Function to operate as a lookup table for which question to get the text for, returns a tuple (question_topic, topic_desc, question_text, question type)
-        match question_index: #Switch case statement to extract the necessary text for the question.
-            case "1": # Each case is one of the questions in the decision tree
-                question_text = "What level of accuracy is required for this facility?"
-                topic_text = "<question_topic for Case 1>"
-                question_topic = "Accuracy Requirements"
-                question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
-            case "2": # Each case is one of the questions in the decision tree
-                question_text = "Is this a new or existing facility?"
-                topic_text = "<question_topic for Case 1>"
-                question_topic = "New/Existing Facility"
-                question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
-            case "3a": # Each case is one of the questions in the decision tree
-                question_text = "Is there an existing WLAN (Wi-Fi) Network?"
-                topic_text = "<question_topic for Case 1>"
-                question_topic = "Existing WLAN"
-                question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
-            case "3b": # Each case is one of the questions in the decision tree
-                question_text = "What grade is the existing WLAN?"
-                topic_text = "<question_topic for Case 1>"
-                question_topic = "Existing WLAN"
-                question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
-            case "4": # Each case is one of the questions in the decision tree
-                question_text = "What level of budget is allocated to the Mobile Duress System?"
-                topic_text = "<question_topic for Case 1>"
-                question_topic = "Budget"
-                question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
-            case "5a": # Each case is one of the questions in the decision tree
-                question_text = "What level of budget is allocated to the Mobile Duress System?"
-                topic_text = "<question_topic for Case 1>"
-                question_topic = "Budget"
-                question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
-            case "5b": # Each case is one of the questions in the decision tree
-                question_text = "What level of budget is allocated to the Mobile Duress System?"
-                topic_text = "<question_topic for Case 1>"
-                question_topic = "Budget"
-                question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
-            case "6": # Each case is one of the questions in the decision tree
-                question_text = "Is there a lot of existing cabling or services infrastructure in the area of works?"
-                topic_text = "<question_topic for Case 1>"
-                question_topic = "Existing Cabling"
-                question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
-            case "7": # Each case is one of the questions in the decision tree
-                question_text = "What type of handsets are intending to be deployed?"
-                topic_text = "<question_topic for Case 1>"
-                question_topic = "Handsets"
-                question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
-            case "8": # Each case is one of the questions in the decision tree
-                question_text = "What type of handsets are intending to be deployed?"
-                topic_text = "<question_topic for Case 1>"
-                question_topic = "Handsets"
-                question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
-            case "9a": # Each case is one of the questions in the decision tree
-                question_text = "What type of walls primarily make up the facility (between rooms where RTLS is desired)"
-                topic_text = "<question_topic for Case 1>"
-                question_topic = "Building Materials"
-                question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
-            case "9b": # Each case is one of the questions in the decision tree
-                question_text = "Is the building primarily made of brick/concrete internal walls?"
-                topic_text = "<question_topic for Case 1>"
-                question_topic = "Building Materials"
-                question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
-            case "9c": # Each case is one of the questions in the decision tree
-                question_text = "Are there many glass panels in internal areas?"
-                topic_text = "<question_topic for Case 1>"
-                question_topic = "Building Materials"
-                question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
-            case "9d": # Each case is one of the questions in the decision tree
-                question_text = "Are there bright outdoor locations that require RTLS coverage?"
-                topic_text = "<question_topic for Case 1>"
-                question_topic = "Building Materials"
-                question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
-            case "9e": # Each case is one of the questions in the decision tree
-                question_text = "Is RTLS coverage required in plant rooms?"
-                topic_text = "<question_topic for Case 1>"
-                question_topic = "Building Materials"
-                question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
-            case _: # Create a case to catch all other possibilities, but entering this case indicates an error in the question logic (see flow diagram)
-                question_text = "<EXCEPTION REACHED>"
-                question_topic = "<EXCEPTION REACHED>"
-                topic_text = "<EXCEPTION REACHED>"
-                question_type = "<EXCEPTION REACHED>"
+    def get_question_text(self, question_index): # Function to operate as a lookup table for which question to get the text for, returns a list (question_topic, topic_desc, question_text, question type)
+        question_text = self.question_text_dict[question_index]
+        question_desc = self.question_desc_dict[question_index]
+        question_topic = self.question_topic_dict[question_index]
 
-        return question_topic, topic_text, question_text, question_type
+        return question_topic, question_desc, question_text
+
+    # def get_question_text(self, question_index): # Function to operate as a lookup table for which question to get the text for, returns a tuple (question_topic, topic_desc, question_text, question type)
+    #     match question_index: #Switch case statement to extract the necessary text for the question.
+    #         case "1": # Each case is one of the questions in the decision tree
+    #             question_text = "What level of accuracy is required for this facility?"
+    #             topic_text = "<question_topic for Case 1>"
+    #             question_topic = "Accuracy Requirements"
+    #             question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
+    #         case "2": # Each case is one of the questions in the decision tree
+    #             question_text = "Is this a new or existing facility?"
+    #             topic_text = "<question_topic for Case 1>"
+    #             question_topic = "New/Existing Facility"
+    #             question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
+    #         case "3a": # Each case is one of the questions in the decision tree
+    #             question_text = "Is there an existing WLAN (Wi-Fi) Network?"
+    #             topic_text = "<question_topic for Case 1>"
+    #             question_topic = "Existing WLAN"
+    #             question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
+    #         case "3b": # Each case is one of the questions in the decision tree
+    #             question_text = "What grade is the existing WLAN?"
+    #             topic_text = "<question_topic for Case 1>"
+    #             question_topic = "Existing WLAN"
+    #             question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
+    #         case "4": # Each case is one of the questions in the decision tree
+    #             question_text = "What level of budget is allocated to the Mobile Duress System?"
+    #             topic_text = "<question_topic for Case 1>"
+    #             question_topic = "Budget"
+    #             question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
+    #         case "5a": # Each case is one of the questions in the decision tree
+    #             question_text = "What level of budget is allocated to the Mobile Duress System?"
+    #             topic_text = "<question_topic for Case 1>"
+    #             question_topic = "Budget"
+    #             question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
+    #         case "5b": # Each case is one of the questions in the decision tree
+    #             question_text = "What level of budget is allocated to the Mobile Duress System?"
+    #             topic_text = "<question_topic for Case 1>"
+    #             question_topic = "Budget"
+    #             question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
+    #         case "6": # Each case is one of the questions in the decision tree
+    #             question_text = "Is there a lot of existing cabling or services infrastructure in the area of works?"
+    #             topic_text = "<question_topic for Case 1>"
+    #             question_topic = "Existing Cabling"
+    #             question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
+    #         case "7": # Each case is one of the questions in the decision tree
+    #             question_text = "What type of handsets are intending to be deployed?"
+    #             topic_text = "<question_topic for Case 1>"
+    #             question_topic = "Handsets"
+    #             question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
+    #         # case "8": # Each case is one of the questions in the decision tree
+    #         #     question_text = "What type of handsets are intending to be deployed?"
+    #         #     topic_text = "<question_topic for Case 1>"
+    #         #     question_topic = "Handsets"
+    #         #     question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
+    #         case "9a": # Each case is one of the questions in the decision tree
+    #             question_text = "What type of walls primarily make up the facility? (between rooms where RTLS is desired)"
+    #             topic_text = "<question_topic for Case 1>"
+    #             question_topic = "Building Materials"
+    #             question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
+    #         case "9b": # Each case is one of the questions in the decision tree
+    #             question_text = "Is the building primarily made of brick/concrete internal walls?"
+    #             topic_text = "<question_topic for Case 1>"
+    #             question_topic = "Building Materials"
+    #             question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
+    #         case "9c": # Each case is one of the questions in the decision tree
+    #             question_text = "Are there many glass panels in internal areas?"
+    #             topic_text = "<question_topic for Case 1>"
+    #             question_topic = "Building Materials"
+    #             question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
+    #         case "9d": # Each case is one of the questions in the decision tree
+    #             question_text = "Are there bright outdoor locations that require RTLS coverage?"
+    #             topic_text = "<question_topic for Case 1>"
+    #             question_topic = "Building Materials"
+    #             question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
+    #         case "9e": # Each case is one of the questions in the decision tree
+    #             question_text = "Is RTLS coverage required in plant rooms?"
+    #             topic_text = "<question_topic for Case 1>"
+    #             question_topic = "Building Materials"
+    #             question_type = "<question_type for Case 1>" # Might not be necessary if there is only one question type in the program.
+    #         case _: # Create a case to catch all other possibilities, but entering this case indicates an error in the question logic (see flow diagram)
+    #             question_text = "<EXCEPTION REACHED>"
+    #             question_topic = "<EXCEPTION REACHED>"
+    #             topic_text = "<EXCEPTION REACHED>"
+    #             question_type = "<EXCEPTION REACHED>"
+
+    #     return question_topic, topic_text, question_text, question_type
         
     def get_question_options(self, question_index): # Function to operate as a lookup table for options to provide to the user (option1, option2, ...)
         match question_index: #Switch case statement to get the text for each of the options within the question
@@ -886,7 +929,7 @@ class App(customtkinter.CTk): # Creating a class for the app
         second_score = scores_dict[second_key]
         third_score = scores_dict[third_key]
     
-        return first_key, first_score, second_key, second_score, third_key, third_score
+        return first_key, second_key, third_key, first_score, second_score, third_score
         
     def append_char(self, case_id): # Takes an index and appends the corresponding statement into the good_characteristics of the appropriate technology
         match case_id:
@@ -976,13 +1019,15 @@ class App(customtkinter.CTk): # Creating a class for the app
         # good_char_dict is the python dictionary that holds the strings of all the good characteristics of each technology based on the decisions that the user made throughout
         # dict_key is the name of the technology about which the good characteristics are trying to be extracted
         out_string = ""
-        for good_char in good_char_dict[dict_key]: # For each good characteristic that has been stored
-            out_string += "\n+ "+good_char # Add this to the final output string on a new line
-        for bad_char in bad_char_dict[dict_key]:
-            out_string += "\n+ "+ bad_char # Add this to the final output string on a new line
+        if good_char_dict[dict_key] != []: # If the dictionary entry for that key is not empty, then there are some characteristics being stored in there. 
+            out_string += "Advantages:"
+            for good_char in good_char_dict[dict_key]: # For each good characteristic that has been stored
+                out_string += "\n\n+ "+good_char # Add this to the final output string on a new line
+        if bad_char_dict[dict_key] != []: # If the dictionary entry for that key is not empty, then there are some characteristics being stored in there. 
+            out_string += "\n\nDisadvantages:"
+            for bad_char in bad_char_dict[dict_key]:
+                out_string += "\n\n- "+ bad_char # Add this to the final output string on a new line
         
-        #wrapped_text = "\n".join(textwrap.fill(line, width=200) for line in out_string.splitlines())
-
         return out_string
 
     def get_tech_desc(dict_key): # Method to get the strings for the general descriptions of the technologies
@@ -1002,6 +1047,9 @@ class App(customtkinter.CTk): # Creating a class for the app
             case _:
                 output_string="<EXCEPTION REACHED IN get_tech_disc()>"
         return output_string
+    
+    def print_to_docx(self): # Function to print all the necessary information to a docx file
+        print("printing to .docx file...")
 
     def build_results_page(self):
          ##----------RESULTS PAGE----------##
@@ -1020,8 +1068,8 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.ResultsPage = customtkinter.CTkFrame(self, fg_color="white", width=self.WIDTH, height=self.HEIGHT) # Creating frame to span the whole page
         self.ResultsPage.grid_columnconfigure((0,5),weight=1)
         self.ResultsPage.grid_columnconfigure((1,2,3,4), weight=8)
-        self.ResultsPage.grid_rowconfigure((0,1), weight=1)
-        self.ResultsPage.grid_rowconfigure(3, weight=5)
+        self.ResultsPage.grid_rowconfigure((0,1), weight=2)
+        self.ResultsPage.grid_rowconfigure(2, weight=5)
 
         # Handling the results from the questions
         top_results = self.get_top_results(self.scores) # Returns a list of first, second, third keys and scores based on the final scores
@@ -1036,7 +1084,7 @@ class App(customtkinter.CTk): # Creating a class for the app
         # Create a frame for each of the buttons and blank spaces in the toolbar
 
         # Following frames separate the buttons into their own frames to align their spacing
-        self.ResultsPage.buttonbar_frame = customtkinter.CTkFrame(self.ResultsPage,width=self.WIDTH-200, height=60, fg_color='red', border_width=2, border_color="red")
+        self.ResultsPage.buttonbar_frame = customtkinter.CTkFrame(self.ResultsPage,width=self.WIDTH-200, height=60, fg_color='#048B6B', border_width=2, border_color="#048B6B")
         self.ResultsPage.buttonbar_frame.grid(row=1,column=0, columnspan=5, sticky="nesw")
         #Following grid configurations follow the same as the main page
         self.ResultsPage.buttonbar_frame.grid_columnconfigure((1,2,3,4), weight=8)
@@ -1044,7 +1092,7 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.ResultsPage.buttonbar_frame.grid_columnconfigure(5, weight=1)
 
         # Following frames separate the buttons into their own frames to align their spacing
-        self.ResultsPage.buttonbar_frame0 = customtkinter.CTkFrame(self.ResultsPage.buttonbar_frame, height=60, fg_color='red', border_color='#048B6B')
+        self.ResultsPage.buttonbar_frame0 = customtkinter.CTkFrame(self.ResultsPage.buttonbar_frame, height=60, fg_color='#048B6B', border_color='#048B6B')
         self.ResultsPage.buttonbar_frame0.grid(row=1,column=0, columnspan=1, sticky="nesw")
         self.ResultsPage.buttonbar_frame1 = customtkinter.CTkFrame(self.ResultsPage.buttonbar_frame, width=40, height=60, fg_color='blue', border_color='#048B6B')
         self.ResultsPage.buttonbar_frame1.grid(row=1,column=1, columnspan=1, sticky="nsew") 
@@ -1095,26 +1143,68 @@ class App(customtkinter.CTk): # Creating a class for the app
             segmented_button_unselected_hover_color="#08343C")
         
         self.ResultsPage.results_tab.grid(row=2,column=1, columnspan=3, padx=20, pady=20)
-        self.ResultsPage.results_tab.add("Result 1")
-        self.ResultsPage.results_tab.add("Result 2")
-        self.ResultsPage.results_tab.add("Result 3")
+        self.ResultsPage.results_tab.add("1st Recommendation")
+        self.ResultsPage.results_tab.add("2nd Recommendation")
+        self.ResultsPage.results_tab.add("3rd Recommendation")
 
         # Creating the first tab
-        self.ResultsPage.results_tab.tab("Result 1").grid_columnconfigure(0,weight=1)
-        self.ResultsPage.results_tab.tab("Result 1").grid_columnconfigure(1,weight=30)
-        self.ResultsPage.results_tab.tab("Result 1").grid_rowconfigure((0,2), weight=1) # Weights for the headings
-        self.ResultsPage.results_tab.tab("Result 1").grid_rowconfigure((1,3), weight=8) # Weights for the body text
+        self.ResultsPage.results_tab.tab("1st Recommendation").grid_columnconfigure(0,weight=1)
+        self.ResultsPage.results_tab.tab("1st Recommendation").grid_columnconfigure(1,weight=30)
+        self.ResultsPage.results_tab.tab("1st Recommendation").grid_rowconfigure((0,2), weight=1) # Weights for the headings
+        self.ResultsPage.results_tab.tab("1st Recommendation").grid_rowconfigure((1,3), weight=8) # Weights for the body text
 
         #Putting widgets inside the first tab
-        self.ResultsPage.results_tab.number_tag = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="1", font=customtkinter.CTkFont(size=14, weight="bold"), text_color="white", corner_radius=500, fg_color="#048B6B", width=30, height=30)
+        self.ResultsPage.results_tab.number_tag = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("1st Recommendation"), text="1", font=customtkinter.CTkFont(size=14, weight="bold"), text_color="white", corner_radius=500, fg_color="#048B6B", width=30, height=30)
         self.ResultsPage.results_tab.number_tag.grid(row=0, column=0, padx=5, pady=5)
-        self.ResultsPage.results_tab.results_subheading1 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text=top_results[0], font=customtkinter.CTkFont(size=24, weight="bold"), text_color="#08343C", anchor="w")
-        self.ResultsPage.results_tab.results_subheading1.grid(row=0, column=1, sticky="nesw", padx=30, pady=10)
-        self.ResultsPage.results_tab.results_description = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="Description text", font=customtkinter.CTkFont(size=16, weight="normal"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_techheading1 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("1st Recommendation"), text=top_results[0], font=customtkinter.CTkFont(size=24, weight="bold"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_techheading1.grid(row=0, column=1, sticky="nesw", padx=30, pady=10)
+        self.ResultsPage.results_tab.results_description1 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("1st Recommendation"), text="Description text", font=customtkinter.CTkFont(size=16, weight="normal"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_description1.grid(row=1, column=1, sticky="nesw", padx=30, pady=10)
+        self.ResultsPage.results_tab.results_charheading1 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("1st Recommendation"), text="Characteristics", font=customtkinter.CTkFont(size=20, weight="bold"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_charheading1.grid(row=2, column=1, sticky="nesw", padx=30, pady=10)
+        self.ResultsPage.results_tab.results_characteristics = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("1st Recommendation"), text=self.get_char_text(self.good_char, self.bad_char, top_results[0]), font=customtkinter.CTkFont(size=16, weight="normal"), text_color="#08343C", anchor="w", justify="left", fg_color = "#78BCAC", wraplength=1700)
+        self.ResultsPage.results_tab.results_characteristics.grid(row=3, column=1, sticky="nesw", padx=30, pady=10)
+
+        self.ResultsPage.prevnext_frame = customtkinter.CTkFrame(self.ResultsPage.content_frame)
+        self.ResultsPage.prevnext_frame.grid(row=3, column=0, columnspan=3, sticky="nsew", padx=20, pady=20)
+        self.ResultsPage.prevnext_frame.grid_columnconfigure(0,weight=15)
+        self.ResultsPage.prevnext_frame.grid_columnconfigure((1,2),weight=1)
+        self.ResultsPage.prevnext_frame.grid_rowconfigure(0,weight=1)
+
+         # Creating the Second tab
+        self.ResultsPage.results_tab.tab("2nd Recommendation").grid_columnconfigure(0,weight=1)
+        self.ResultsPage.results_tab.tab("2nd Recommendation").grid_columnconfigure(1,weight=30)
+        self.ResultsPage.results_tab.tab("2nd Recommendation").grid_rowconfigure((0,2), weight=1) # Weights for the headings
+        self.ResultsPage.results_tab.tab("2nd Recommendation").grid_rowconfigure((1,3), weight=8) # Weights for the body text
+
+        #Putting widgets inside the Second tab
+        self.ResultsPage.results_tab.number_tag = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("2nd Recommendation"), text="2", font=customtkinter.CTkFont(size=14, weight="bold"), text_color="white", corner_radius=500, fg_color="#048B6B", width=30, height=30)
+        self.ResultsPage.results_tab.number_tag.grid(row=0, column=0, padx=5, pady=5)
+        self.ResultsPage.results_tab.results_techheading2 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("2nd Recommendation"), text=top_results[1], font=customtkinter.CTkFont(size=24, weight="bold"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_techheading2.grid(row=0, column=1, sticky="nesw", padx=30, pady=10)
+        self.ResultsPage.results_tab.results_description = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("2nd Recommendation"), text="Description text", font=customtkinter.CTkFont(size=16, weight="normal"), text_color="#08343C", anchor="w")
         self.ResultsPage.results_tab.results_description.grid(row=1, column=1, sticky="nesw", padx=30, pady=10)
-        self.ResultsPage.results_tab.results_subheading2 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text="Characteristics", font=customtkinter.CTkFont(size=20, weight="bold"), text_color="#08343C", anchor="w")
-        self.ResultsPage.results_tab.results_subheading2.grid(row=2, column=1, sticky="nesw", padx=30, pady=10)
-        self.ResultsPage.results_tab.results_characteristics = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("Result 1"), text=self.get_char_text(self.good_char, self.bad_char, top_results[0]), font=customtkinter.CTkFont(size=16, weight="normal"), text_color="#08343C", anchor="w", justify="left", fg_color = "red", wraplength=1000)
+        self.ResultsPage.results_tab.results_charheading2 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("2nd Recommendation"), text="Characteristics", font=customtkinter.CTkFont(size=20, weight="bold"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_charheading2.grid(row=2, column=1, sticky="nesw", padx=30, pady=10)
+        self.ResultsPage.results_tab.results_characteristics = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("2nd Recommendation"), text=self.get_char_text(self.good_char, self.bad_char, top_results[1]), font=customtkinter.CTkFont(size=16, weight="normal"), text_color="#08343C", anchor="w", justify="left", fg_color = "#78BCAC", wraplength=1000)
+        self.ResultsPage.results_tab.results_characteristics.grid(row=3, column=1, sticky="nesw", padx=30, pady=10)
+
+        # Creating the Third tab
+        self.ResultsPage.results_tab.tab("3rd Recommendation").grid_columnconfigure(0,weight=1)
+        self.ResultsPage.results_tab.tab("3rd Recommendation").grid_columnconfigure(1,weight=30)
+        self.ResultsPage.results_tab.tab("3rd Recommendation").grid_rowconfigure((0,2), weight=1) # Weights for the headings
+        self.ResultsPage.results_tab.tab("3rd Recommendation").grid_rowconfigure((1,3), weight=8) # Weights for the body text
+
+        #Putting widgets inside the Third tab
+        self.ResultsPage.results_tab.number_tag = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("3rd Recommendation"), text="3", font=customtkinter.CTkFont(size=14, weight="bold"), text_color="white", corner_radius=500, fg_color="#048B6B", width=30, height=30)
+        self.ResultsPage.results_tab.number_tag.grid(row=0, column=0, padx=5, pady=5)
+        self.ResultsPage.results_tab.results_techheading2 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("3rd Recommendation"), text=top_results[2], font=customtkinter.CTkFont(size=24, weight="bold"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_techheading2.grid(row=0, column=1, sticky="nesw", padx=30, pady=10)
+        self.ResultsPage.results_tab.results_description = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("3rd Recommendation"), text="Description text", font=customtkinter.CTkFont(size=16, weight="normal"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_description.grid(row=1, column=1, sticky="nesw", padx=30, pady=10)
+        self.ResultsPage.results_tab.results_charheading2 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("3rd Recommendation"), text="Characteristics", font=customtkinter.CTkFont(size=20, weight="bold"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_charheading2.grid(row=2, column=1, sticky="nesw", padx=30, pady=10)
+        self.ResultsPage.results_tab.results_characteristics = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("3rd Recommendation"), text=self.get_char_text(self.good_char, self.bad_char, top_results[2]), font=customtkinter.CTkFont(size=16, weight="normal"), text_color="#08343C", anchor="w", justify="left", fg_color = "#78BCAC", wraplength=1000)
         self.ResultsPage.results_tab.results_characteristics.grid(row=3, column=1, sticky="nesw", padx=30, pady=10)
 
         self.ResultsPage.prevnext_frame = customtkinter.CTkFrame(self.ResultsPage.content_frame)
@@ -1124,12 +1214,12 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.ResultsPage.prevnext_frame.grid_rowconfigure(0,weight=1)
 
         # Creating Previous and next buttons at the bottom of the page
-        self.ResultsPage.prev_button = customtkinter.CTkButton(self.ResultsPage.prevnext_frame, text='Save', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
-        self.ResultsPage.prev_button.grid(row=2, column=2)
-        self.ResultsPage.prev_button.configure(state="disabled") # Disable the previous question button since we are on the first question
-        self.ResultsPage.next_button = customtkinter.CTkButton(self.ResultsPage.prevnext_frame, text='Print to .docx', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
-        self.ResultsPage.next_button.grid(row=2, column=3)
-        self.ResultsPage.next_button.configure(state="disabled") # Can't go to the next question until we put in a radio option
+        self.ResultsPage.save_button = customtkinter.CTkButton(self.ResultsPage.prevnext_frame, text='Save', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        self.ResultsPage.save_button.grid(row=2, column=2)
+        self.ResultsPage.save_button.configure(state="disabled") # Disable the previous question button since we are on the first question
+        self.ResultsPage.print_button = customtkinter.CTkButton(self.ResultsPage.prevnext_frame, command=self.print_to_docx, text='Print to .docx', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        self.ResultsPage.print_button.grid(row=2, column=3)
+        self.ResultsPage.print_button.configure(state="disabled") # Can't go to the next question until we put in a radio option
 
         self.ResultsPage.pack(fill=customtkinter.BOTH)
 
