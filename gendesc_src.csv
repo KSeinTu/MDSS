@@ -1,0 +1,13 @@
+Report Title,Mobile Duress Technology Recommendation Report
+Report Intro,"Mobile duress systems in the healthcare sector provide assistance to clinical staff in the event of an emergency where a patient or member of the public may become threatening or violent. These systems primarily involve using a pendant or smart device to trigger a duress alarm that is sent to relevant parties such as response teams or security, who use the system to locate the staff member in distress. To operate, the mobile duress solution uses a real-time location system (RTLS). Since GPS locating systems cannot operate reliably indoors, the RTLS infrastructure used typically utilises Wi-Fi, Bluetooth Low Energy (BLE), UWB, IR, or RF technology to locate the pendant/smart device held by the staff member initialing the duress alarm. There are a range of important factors that determine which type of RTLS technology should be implemented to facilitate a healthcare facilities mobile duress operation. 
+
+This report outlines and provides three ranked recommendations for the most suitable RTLS technologies for this project's mobile duress needs. The recommendations are based on several key factors of the project. These factors include but are not limited to: 
+- The location accuracy requirements of the project
+- Whether the facility is new or existing
+- The current or planned Wireless Local Area Network (WLAN)
+- The available budget, the state of any existing services infrastructure within the facility
+- The types of devices intended to be used as locating devices
+- The materials used in the building.
+
+The top ranking recommendation is number 1, followed by recommendations 2 and 3."
+Results Desc,"Based on the choices you've selected, the following three recommendations for the most suitable RTLS technologies for your project's mobile duress system have been provided in the three tabs below. You can select the different tabs to view more information about the technology in general, how it is implemented, and some unique characteristics that may be relevant to the technology in the context of your specific project."
