@@ -1,0 +1,45 @@
+Questions:
+Question,1
+Question,2
+Question,3a
+Question,3b
+Question,5b
+Question,6
+Question,7
+Question,9a
+Question,9c
+Question,9d
+Question,9e
+Choices:
+Choice,1
+Choice,2
+Choice,1
+Choice,2
+Choice,1
+Choice,2
+Choice,3
+Choice,2
+Choice,1
+Choice,2
+Choice,1
+Good Characteristics:
+BLE,BLE locators can provide high accuracy positioning as required by this project.
+BLE,"BLE-based systems are suited to low-budget since the cost of each locator point is significantly cheaper to alternatives such as wireless access points for Wi-Fi. Additionally, the cost of the individual locator tags is relatively low (approximately in the $60 range) and the battery life is relatively long (up to approximately 7 years) which significantly reduces the on-going costs of the solution. However, since there is an existing RTLS-grade Wi-Fi network, the higher operating costs might be comparable to the cost of installing an entirely new BLE locator network, therefore further budgeting work for the individual project should be performed to compare the two solutions more effectively."
+Wi-Fi BLE Hybrid,The Wi-Fi Wireless Access Points coupled with BLE locators can provide high accuracy positioning as required by the project.
+Wi-Fi BLE Hybrid,"The existing WLAN is RTLS-grade, so bluetooth beacons could be used in tandem with the existing Wireless Access Points to create more precise zones for location tracking. This would in turn further narrow down the location of a staff-member in distress, though this further level of performance may not be needed."
+Wi-Fi,"The existing WLAN is RTLS-grade, therefore it is sensible to utilise this existing network to provide the location services throughout the facility."
+Wi-Fi,"Wi-Fi based solutions are a more costly RTLS solution due to more expensive locator tags and access points compared to other technologies such as BLE. However, the overall cost of the solution will be significantly reduced since there is already an RTLS-grade network in the facility. Further budgeting evaluation should be conducted to find which solution would provide better value to the client long-term, since the Wi-FI solution will have higher long-term costs but alternatives might have higher initial costs to install their locator networks."
+DECT,"Since the handsets to be deployed in this facility are DECT handsets, utilising this capability and implementing a DECT-based RTLS is recommended, since this provides the hardware capability to connect the DECT handsets to the locating beacons within the facility."
+Bad Characteristics:
+BLE,"The existing WLAN is RTLS-grade, so despite it being possible to implement a BLE locator network, it might be more sensible to utilise the existing RTLS-grade Wi-Fi network to provide location services for the Mobile Duress System"
+Wi-Fi BLE Hybrid,"High numbers of glass panels within internal areas will negatively impact the signal propagation of RTLS which utilises Wi-Fi, therefore negatively impacting its performance."
+Wi-Fi BLE Hybrid,"Plant rooms have high amounts of electromagnetic interference due to plant, therefore RTLS solutions utilising Wi-Fi in particular may perform poorly due to their higher signal quality requirements compared to other technologies."
+Wi-Fi,The Wi-Fi Wireless Access Points may not be able to reliably provide the high level of accuracy required by the project.
+Wi-Fi,"High numbers of glass panels within internal areas will negatively impact the signal propagation of RTLS which utilises Wi-Fi, therefore negatively impacting its performance."
+Wi-Fi,"Plant rooms have high amounts of electromagnetic interference due to plant, therefore RTLS solutions utilising Wi-Fi in particular may perform poorly due to their higher signal quality requirements compared to other technologies."
+RF,The RF locators may not be able to reliably provide the high level of accuracy required by the project.
+RF,"The existing WLAN is RTLS-grade, so despite it being possible to implement an RF network, it might be more sensible to utilise the existing RTLS-grade Wi-Fi network to provide location services for the Mobile Duress System."
+RF,"Although RF solutions provide a reliable and low-cost solution for RTLS, utilising the existing RTLS-grade network would generally be a better solution."
+DECT,The DECT locators may not be able to reliably provide the high level of accuracy required by the project.
+DECT,"The existing WLAN is RTLS-grade, so despite it being possible to implement an RF network, it might be more sensible to utilise the existing RTLS-grade Wi-Fi network to provide location services for the Mobile Duress System."
+DECT,"Although DECT solutions provide a reliable and low-cost solution for RTLS, utilising the existing RTLS-grade network would generally be a better solution."

@@ -6,6 +6,7 @@ import csv
 from docx import Document # for writing the word document output
 from docx.shared import Inches # for writing the word document output
 from tkinter import messagebox
+from tkinter import filedialog
 
 
 customtkinter.set_appearance_mode("light")
@@ -209,14 +210,14 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.WelcomePage.guidance_label.pack()
 
         # Creating buttons
-        self.WelcomePage.load_button_top = customtkinter.CTkButton(self.WelcomePage.buttonbar_frame1, command=self.load_project_button_event, text='Load Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        self.WelcomePage.load_button_top = customtkinter.CTkButton(self.WelcomePage.buttonbar_frame1, command=self.load_project, text='Load Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.WelcomePage.load_button_top.pack(padx=10, pady=10)
         self.WelcomePage.new_project_button_top = customtkinter.CTkButton(self.WelcomePage.buttonbar_frame2, command=self.changeToQuestion1, text='New Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.WelcomePage.new_project_button_top.pack(padx=10, pady=10)
         self.WelcomePage.user_manual_button_top = customtkinter.CTkButton(self.WelcomePage.buttonbar_frame3, command=self.user_manual_button_event, text='User Manual', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.WelcomePage.user_manual_button_top.pack(padx=10, pady=10)
 
-        self.WelcomePage.load_button_mid = customtkinter.CTkButton(self.WelcomePage.content_frame31, command=self.load_project_button_event, text='Load Project', fg_color="#048B6B", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        self.WelcomePage.load_button_mid = customtkinter.CTkButton(self.WelcomePage.content_frame31, command=self.load_project, text='Load Project', fg_color="#048B6B", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.WelcomePage.load_button_mid.pack()
         self.WelcomePage.new_project_button_mid = customtkinter.CTkButton(self.WelcomePage.content_frame32, command=self.changeToQuestion1, text='New Project', fg_color="#048B6B", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.WelcomePage.new_project_button_mid.pack()
@@ -259,9 +260,9 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.QuestionPage.buttonbar_frame = customtkinter.CTkFrame(self.QuestionPage,width=self.WIDTH-200, height=60, fg_color='#048B6B')
         self.QuestionPage.buttonbar_frame.grid(row=1,column=0, columnspan=5, sticky="nesw")
         #Following grid configurations follow the same as the main page
-        self.QuestionPage.buttonbar_frame.grid_columnconfigure((1,2,3,4), weight=3)
+        self.QuestionPage.buttonbar_frame.grid_columnconfigure((1,2,3), weight=3)
         self.QuestionPage.buttonbar_frame.grid_columnconfigure(0, weight=2)
-        self.QuestionPage.buttonbar_frame.grid_columnconfigure(5, weight=2)
+        self.QuestionPage.buttonbar_frame.grid_columnconfigure(4, weight=2)
 
         # Following frames separate the buttons into their own frames to align their spacing
         self.QuestionPage.buttonbar_frame0 = customtkinter.CTkFrame(self.QuestionPage.buttonbar_frame, width=100, height=60, fg_color='#048B6B', border_color='#048B6B')
@@ -272,10 +273,10 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.QuestionPage.buttonbar_frame2.grid(row=1,column=2, columnspan=1, sticky="nesw") 
         self.QuestionPage.buttonbar_frame3 = customtkinter.CTkFrame(self.QuestionPage.buttonbar_frame, width=40, height=60, fg_color='#048B6B', border_color='#048B6B')
         self.QuestionPage.buttonbar_frame3.grid(row=1,column=3, columnspan=1, sticky="nesw")
-        self.QuestionPage.buttonbar_frame4 = customtkinter.CTkFrame(self.QuestionPage.buttonbar_frame, width=40, height=60, fg_color='#048B6B', border_color='#048B6B')
+        self.QuestionPage.buttonbar_frame4 = customtkinter.CTkFrame(self.QuestionPage.buttonbar_frame, width=60, height=60, fg_color='#048B6B', border_color='#048B6B')
         self.QuestionPage.buttonbar_frame4.grid(row=1,column=4, columnspan=1, sticky="nesw")
-        self.QuestionPage.buttonbar_frame5 = customtkinter.CTkFrame(self.QuestionPage.buttonbar_frame, width=60, height=60, fg_color='#048B6B', border_color='#048B6B')
-        self.QuestionPage.buttonbar_frame5.grid(row=1,column=5, columnspan=1, sticky="nesw") 
+        # self.QuestionPage.buttonbar_frame5 = customtkinter.CTkFrame(self.QuestionPage.buttonbar_frame, width=60, height=60, fg_color='#048B6B', border_color='#048B6B')
+        # self.QuestionPage.buttonbar_frame5.grid(row=1,column=5, columnspan=1, sticky="nesw") 
 
         # Creating a frame for the sidebar
         # self.QuestionPage.sidebar_frame = customtkinter.CTkFrame(self.QuestionPage, fg_color="#048B6B", width=50)
@@ -317,13 +318,13 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.QuestionPage.content_frame.grid_columnconfigure(0, weight=2)
 
         # Creating buttons
-        self.QuestionPage.save_project_button = customtkinter.CTkButton(self.QuestionPage.buttonbar_frame1, command=self.user_manual_button_event, text='Save Current Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
-        self.QuestionPage.save_project_button.pack(padx=5, pady=10)
-        self.QuestionPage.load_button = customtkinter.CTkButton(self.QuestionPage.buttonbar_frame2, command=self.load_project_button_event, text='Load Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        # self.QuestionPage.save_project_button = customtkinter.CTkButton(self.QuestionPage.buttonbar_frame1, command=self.user_manual_button_event, text='Save Current Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        # self.QuestionPage.save_project_button.pack(padx=5, pady=10)
+        self.QuestionPage.load_button = customtkinter.CTkButton(self.QuestionPage.buttonbar_frame1, command=self.load_project, text='Load Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.QuestionPage.load_button.pack(padx=5, pady=10)
-        self.QuestionPage.new_project_button = customtkinter.CTkButton(self.QuestionPage.buttonbar_frame3, command=self.changeToQuestion1, text='New Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        self.QuestionPage.new_project_button = customtkinter.CTkButton(self.QuestionPage.buttonbar_frame2, command=self.changeToQuestion1, text='New Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.QuestionPage.new_project_button.pack(padx=5, pady=10)
-        self.QuestionPage.user_manual_button = customtkinter.CTkButton(self.QuestionPage.buttonbar_frame4, command=self.user_manual_button_event, text='User Manual', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        self.QuestionPage.user_manual_button = customtkinter.CTkButton(self.QuestionPage.buttonbar_frame3, command=self.user_manual_button_event, text='User Manual', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.QuestionPage.user_manual_button.pack(padx=5, pady=10)
 
         # Creating text labels in main body
@@ -504,9 +505,6 @@ class App(customtkinter.CTk): # Creating a class for the app
         else:
             self.QuestionPage.next_button.configure(state="disabled")
 
-    def load_project_button_event(self):
-        print("test")
-
     def get_question_text(self, question_index): # Function to operate as a lookup table for which question to get the text for, returns a list (question_topic, topic_desc, question_text, question type)
         question_text = self.question_text_dict[question_index]
         question_desc = self.question_desc_dict[question_index]
@@ -552,8 +550,8 @@ class App(customtkinter.CTk): # Creating a class for the app
             case "7": # Each case is one of the questions in the decision tree
                 question_option1 = "Smartphone, Wi-Fi and bluetooth capable"
                 question_option2 = "Smartphone, Wi-Fi capable only"
-                question_option3 = "DECT Handset"
-                question_option4 = "RF Handset"
+                question_option3 = "DECT Handset or pager"
+                question_option4 = "RF Handset or pager"
                 question_option5 = "Locator Tag"
                 num_options = 5        
             # case "8": # Each case is one of the questions in the decision tree
@@ -634,14 +632,16 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.QuestionPage.option1_frame = customtkinter.CTkFrame(self.QuestionPage.option_frame, fg_color="#08343C", border_color="#08343C", height=60, corner_radius=8)
         #self.QuestionPage.option1_frame.grid(row=0, column=0, padx=10, sticky="ew")
         self.QuestionPage.option1_frame.pack(pady=10, padx=30, anchor="w")
-        self.QuestionPage.option1_radio = customtkinter.CTkRadioButton(master=self.QuestionPage.option1_frame, command=self.radio_option1_callback, variable=self.QuestionPage.radio_option, value=1, font=customtkinter.CTkFont(size=16), text=radio_options[1], text_color="white", corner_radius=6)
+        self.QuestionPage.option1_radio = customtkinter.CTkRadioButton(master=self.QuestionPage.option1_frame, command=self.radio_option1_callback, variable=self.QuestionPage.radio_option, value=1, font=customtkinter.CTkFont(size=16), text=radio_options[1], text_color="white", corner_radius=50)
         self.QuestionPage.option1_radio.grid(row=0, column=0, pady=10, padx=30, sticky="nsew")
+        self.QuestionPage.option1_frame.bind("<Button-1>", self.QuestionPage.option1_radio.invoke)
 
         self.QuestionPage.option2_frame = customtkinter.CTkFrame(self.QuestionPage.option_frame, fg_color="#08343C", border_color="#08343C", height=60, corner_radius=8)
         #self.QuestionPage.option2_frame.grid(row=1, column=0, padx=10, sticky="ew")
         self.QuestionPage.option2_frame.pack(pady=10, padx=30, anchor="w")
-        self.QuestionPage.option2_radio = customtkinter.CTkRadioButton(master=self.QuestionPage.option2_frame, command=self.radio_option2_callback, variable=self.QuestionPage.radio_option, value=2, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[2], text_color="white", corner_radius=6)
+        self.QuestionPage.option2_radio = customtkinter.CTkRadioButton(master=self.QuestionPage.option2_frame, command=self.radio_option2_callback, variable=self.QuestionPage.radio_option, value=2, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[2], text_color="white", corner_radius=50)
         self.QuestionPage.option2_radio.grid(row=0, column=0, pady=10, padx=30, sticky="nsew")
+        self.QuestionPage.option2_frame.bind("<Button-1>", self.QuestionPage.option2_radio.invoke)
 
         # Buttons 3 and 4 do not always appear, appearance is based on the number of options that the question has available
         match radio_options[0]:
@@ -649,38 +649,44 @@ class App(customtkinter.CTk): # Creating a class for the app
                 self.QuestionPage.option3_frame = customtkinter.CTkFrame(self.QuestionPage.option_frame, fg_color="#08343C", border_color="#08343C", height=40, corner_radius=8)
                 #self.QuestionPage.option3_frame.grid(row=0, column=0, padx=10, sticky="ew")
                 self.QuestionPage.option3_frame.pack(pady=10, padx=30, anchor="w")
-                self.QuestionPage.option3_radio = customtkinter.CTkRadioButton(master=self.QuestionPage.option3_frame, command=self.radio_option3_callback, variable=self.QuestionPage.radio_option, value=3, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[3], text_color="white", corner_radius=6)
+                self.QuestionPage.option3_radio = customtkinter.CTkRadioButton(master=self.QuestionPage.option3_frame, command=self.radio_option3_callback, variable=self.QuestionPage.radio_option, value=3, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[3], text_color="white", corner_radius=50)
                 self.QuestionPage.option3_radio.grid(row=0, column=0, pady=10, padx=30, sticky="nsew")
+                self.QuestionPage.option3_frame.bind("<Button-1>", self.QuestionPage.option3_radio.invoke) # Allow the user to click the frame and still select the radio option
             case 4:
                 self.QuestionPage.option3_frame = customtkinter.CTkFrame(self.QuestionPage.option_frame, fg_color="#08343C", border_color="#08343C", height=40, corner_radius=8)
                 #self.QuestionPage.option3_frame.grid(row=0, column=0, padx=10, sticky="ew")
                 self.QuestionPage.option3_frame.pack(pady=10, padx=30, anchor="w")
-                self.QuestionPage.option3_radio = customtkinter.CTkRadioButton(master=self.QuestionPage.option3_frame, command=self.radio_option3_callback, variable=self.QuestionPage.radio_option, value=3, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[3], text_color="white", corner_radius=6)
+                self.QuestionPage.option3_radio = customtkinter.CTkRadioButton(master=self.QuestionPage.option3_frame, command=self.radio_option3_callback, variable=self.QuestionPage.radio_option, value=3, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[3], text_color="white", corner_radius=50)
                 self.QuestionPage.option3_radio.grid(row=0, column=0, pady=10, padx=30, sticky="nsew")
+                self.QuestionPage.option3_frame.bind("<Button-1>", self.QuestionPage.option3_radio.invoke)
                 
                 self.QuestionPage.option4_frame = customtkinter.CTkFrame(self.QuestionPage.option_frame, fg_color="#08343C", border_color="#08343C", height=40, corner_radius=8)
                 #self.QuestionPage.option4_frame.grid(row=1, column=0, padx=10, sticky="ew")
                 self.QuestionPage.option4_frame.pack(pady=10, padx=30, anchor="w")
-                self.QuestionPage.option4_radio = customtkinter.CTkRadioButton(master=self.QuestionPage.option4_frame, command=self.radio_option4_callback, variable=self.QuestionPage.radio_option, value=4, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[4], text_color="white", corner_radius=6)
+                self.QuestionPage.option4_radio = customtkinter.CTkRadioButton(master=self.QuestionPage.option4_frame, command=self.radio_option4_callback, variable=self.QuestionPage.radio_option, value=4, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[4], text_color="white", corner_radius=50)
                 self.QuestionPage.option4_radio.grid(row=0, column=0, pady=10, padx=30, sticky="nsew")
+                self.QuestionPage.option4_frame.bind("<Button-1>", self.QuestionPage.option4_radio.invoke)
             case 5:
                 self.QuestionPage.option3_frame = customtkinter.CTkFrame(self.QuestionPage.option_frame, fg_color="#08343C", border_color="#08343C", height=40, corner_radius=8)
                 #self.QuestionPage.option3_frame.grid(row=0, column=0, padx=10, sticky="ew")
                 self.QuestionPage.option3_frame.pack(pady=10, padx=30, anchor="w")
-                self.QuestionPage.option3_radio = customtkinter.CTkRadioButton(master=self.QuestionPage.option3_frame, command=self.radio_option3_callback, variable=self.QuestionPage.radio_option, value=3, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[3], text_color="white", corner_radius=6)
+                self.QuestionPage.option3_radio = customtkinter.CTkRadioButton(master=self.QuestionPage.option3_frame, command=self.radio_option3_callback, variable=self.QuestionPage.radio_option, value=3, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[3], text_color="white", corner_radius=50)
                 self.QuestionPage.option3_radio.grid(row=0, column=0, pady=10, padx=30, sticky="nsew")
+                self.QuestionPage.option3_frame.bind("<Button-1>", self.QuestionPage.option3_radio.invoke)
                 
                 self.QuestionPage.option4_frame = customtkinter.CTkFrame(self.QuestionPage.option_frame, fg_color="#08343C", border_color="#08343C", height=40, corner_radius=8)
                 #self.QuestionPage.option4_frame.grid(row=1, column=0, padx=10, sticky="ew")
                 self.QuestionPage.option4_frame.pack(pady=10, padx=30, anchor="w")
-                self.QuestionPage.option4_radio = customtkinter.CTkRadioButton(master=self.QuestionPage.option4_frame, command=self.radio_option4_callback, variable=self.QuestionPage.radio_option, value=4, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[4], text_color="white", corner_radius=6)
+                self.QuestionPage.option4_radio = customtkinter.CTkRadioButton(master=self.QuestionPage.option4_frame, command=self.radio_option4_callback, variable=self.QuestionPage.radio_option, value=4, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[4], text_color="white", corner_radius=50)
                 self.QuestionPage.option4_radio.grid(row=0, column=0, pady=10, padx=30, sticky="nsew")
+                self.QuestionPage.option4_frame.bind("<Button-1>", self.QuestionPage.option4_radio.invoke)
                 
                 self.QuestionPage.option5_frame = customtkinter.CTkFrame(self.QuestionPage.option_frame, fg_color="#08343C", border_color="#08343C", height=40, corner_radius=8)
                 #self.QuestionPage.option4_frame.grid(row=1, column=0, padx=10, sticky="ew")
                 self.QuestionPage.option5_frame.pack(pady=10, padx=30, anchor="w")
-                self.QuestionPage.option5_radio = customtkinter.CTkRadioButton(master=self.QuestionPage.option5_frame, command=self.radio_option5_callback, variable=self.QuestionPage.radio_option, value=5, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[5], text_color="white", corner_radius=6)
+                self.QuestionPage.option5_radio = customtkinter.CTkRadioButton(master=self.QuestionPage.option5_frame, command=self.radio_option5_callback, variable=self.QuestionPage.radio_option, value=5, font=customtkinter.CTkFont(size=16), text=self.get_question_options(question_index)[5], text_color="white", corner_radius=50)
                 self.QuestionPage.option5_radio.grid(row=0, column=0, pady=10, padx=30, sticky="nsew")
+                self.QuestionPage.option5_frame.bind("<Button-1>", self.QuestionPage.option5_radio.invoke)
 
     def new_project_button_event(self):
         self.changeToQuestion1()
@@ -977,7 +983,7 @@ class App(customtkinter.CTk): # Creating a class for the app
                 self.good_char["DECT"].append(self.char_dict[32])
             case 7: #5b -- Low-medium
                 self.good_char["BLE"].append(self.char_dict[33])
-                self.good_char["Wi-Fi BLE Hybrid"].append(self.char_dict[34])
+                #self.good_char["Wi-Fi BLE Hybrid"].append(self.char_dict[34])
                 self.good_char["Wi-Fi"].append(self.char_dict[35])
                 self.bad_char["RF"].append(self.char_dict[36])
                 self.bad_char["DECT"].append(self.char_dict[37])
@@ -1066,7 +1072,9 @@ class App(customtkinter.CTk): # Creating a class for the app
 
         print("printing to .docx file...")
         out_doc = Document()
+        out_doc.add_picture('img/DocCoverImg.jpg', width=Inches(1.25)) # Insert a cover image
         out_doc.add_heading(self.gen_desc_dict["Report Title"], 0)
+        out_doc.add_page_break() # Start the Text and headings on the next page
         # Introduction
         out_doc.add_heading("Introduction", 1)
         out_doc.add_paragraph(self.gen_desc_dict["Report Intro"])
@@ -1074,7 +1082,7 @@ class App(customtkinter.CTk): # Creating a class for the app
         for i in range(3): # For each of the three recommendations
             rec_heading1 = str(i+1) + ".0 " + self.extract_title(self.top_results[i])
             out_doc.add_heading(rec_heading1,1)
-            rec_heading2 = str(i+1) + ".1 " + "Description"
+            rec_heading2 = str(i+1) + ".1 " + "Technical Description"
             out_doc.add_heading(rec_heading2, 2)
             out_doc.add_paragraph(self.tech_desc_dict[self.top_results[i]])
             rec_heading3 = str(i+1) + ".2 " + "Characteristics"
@@ -1082,7 +1090,7 @@ class App(customtkinter.CTk): # Creating a class for the app
             out_doc.add_paragraph(self.get_char_text(self.good_char, self.bad_char, self.top_results[i]))
 
         out_doc.save(out_filename)
-        messagebox.showinfo("Success", "File saved successfully.")
+        messagebox.showinfo("Success", "File printed successfully.")
 
     def extract_title(self, shortform): # simple function to return the full name of the technology based on the shortform version
         out_string = "EXCEPTION"
@@ -1090,7 +1098,7 @@ class App(customtkinter.CTk): # Creating a class for the app
             out_string = "Bluetooth Low-Energy (BLE)"
         elif shortform == "Wi-Fi BLE Hybrid":
             out_string = "Wi-Fi Bluetooth Low-Energy Hybrid"
-        elif shortform == "Wi-Fi":
+        elif shortform == "Wi-Fi":  
             out_string = "Wi-Fi"
         elif shortform == "RF":
             out_string = "Radio Frequency (RF)"
@@ -1098,11 +1106,72 @@ class App(customtkinter.CTk): # Creating a class for the app
             out_string = "Digital Enhanced Cordless Technology (DECT)"
         return out_string
 
+    def save_project(self): # Function to save the project progress to a file
+        filepath = filedialog.asksaveasfilename(
+        defaultextension=".csv",
+        filetypes=[("CSV Files", "*.csv"), ("All Files", "*.*")],
+        title="Save File As"
+        )
+        if filepath: # If the file path exists:
+        # save the following to the file in the filepath
+            with open(filepath, "w", newline='') as csvfile:
+                writer = csv.writer(csvfile) # Create a writer to be able to write data to a csv file
+                writer.writerow(["Questions:"]) # Insert a header row to signify the next section
+                for questionID in self.question_history:
+                    writer.writerow(["Question", questionID]) # Write the questions to the csv file
+                writer.writerow(["Choices:"]) # Insert a header row to signify the next section
+                for choice in self.choice_history:
+                    writer.writerow(["Choice", choice])
+                messagebox.showinfo("Success", "File saved successfully.")
+        else:
+            messagebox.showinfo("ERROR: Could not save file.")
+    
+    def load_project(self): # Load project from file
+        filepath = filedialog.askopenfilename(
+            title="Open File",
+            filetypes = [("CSV Files", "*.csv"), ("All Files", "*.*")]
+        )
+        if filepath:
+            self.reset_variables()
+            with open(filepath, 'r') as csvfile: # Open the file with the specified file path
+                reader = csv.reader(csvfile)
+                hist_flag = 0 # create a flag to indicate when we are in the question history section
+                choice_flag = 0 # create a flag to indictate when we are in the question history section
+                goodchar_flag = 0
+                badchar_flag = 0
+                for row in reader:
+                    print(row)
+                    if row[0] == "Questions:": # If we encounter the header, then we are in the questions section
+                        hist_flag = 1
+                        choice_flag = 0
+                        goodchar_flag = 0
+                        badchar_flag = 0
+                    elif row[0] == "Choices:": # If we encounter the header, then we are in the choices section
+                        hist_flag = 0
+                        choice_flag = 1
+                        goodchar_flag = 0
+                        badchar_flag = 0
+                    elif row[0] == "Good Characteristics:":
+                        hist_flag = 0
+                        choice_flag = 0
+                        goodchar_flag = 1
+                        badchar_flag = 0
+                    elif row[0] == "Bad Characteristics:":
+                        hist_flag = 0
+                        choice_flag = 0
+                        goodchar_flag = 0
+                        badchar_flag = 1
+                    elif hist_flag == 1:
+                        self.question_history.append(row[1])
+                    elif choice_flag == 1:
+                        self.choice_history.append(int(row[1]))
+                    
+            self.build_results_page()
 
 
     def build_results_page(self):
          ##----------RESULTS PAGE----------##
-        print("changeToQuestion1")
+        print("Change to Results Page")
         try:
             self.WelcomePage.destroy()
         except AttributeError:
@@ -1136,9 +1205,9 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.ResultsPage.buttonbar_frame = customtkinter.CTkFrame(self.ResultsPage,width=self.WIDTH-200, height=60, fg_color='#048B6B', border_width=2, border_color="#048B6B")
         self.ResultsPage.buttonbar_frame.grid(row=1,column=0, columnspan=5, sticky="nesw")
         #Following grid configurations follow the same as the main page
-        self.ResultsPage.buttonbar_frame.grid_columnconfigure((1,2,3,4), weight=8)
+        self.ResultsPage.buttonbar_frame.grid_columnconfigure((1,2,3), weight=8)
         self.ResultsPage.buttonbar_frame.grid_columnconfigure(0, weight=1)
-        self.ResultsPage.buttonbar_frame.grid_columnconfigure(5, weight=1)
+        self.ResultsPage.buttonbar_frame.grid_columnconfigure(4, weight=1)
 
         # Following frames separate the buttons into their own frames to align their spacing
         self.ResultsPage.buttonbar_frame0 = customtkinter.CTkFrame(self.ResultsPage.buttonbar_frame, height=60, fg_color='#048B6B', border_color='#048B6B')
@@ -1149,10 +1218,10 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.ResultsPage.buttonbar_frame2.grid(row=1,column=2, columnspan=1, sticky="nesw") 
         self.ResultsPage.buttonbar_frame3 = customtkinter.CTkFrame(self.ResultsPage.buttonbar_frame, width=40, height=60, fg_color='#048B6B', border_color='#048B6B')
         self.ResultsPage.buttonbar_frame3.grid(row=1,column=3, columnspan=1, sticky="nesw")
-        self.ResultsPage.buttonbar_frame4 = customtkinter.CTkFrame(self.ResultsPage.buttonbar_frame, width=40, height=60, fg_color='#048B6B', border_color='#048B6B')
+        self.ResultsPage.buttonbar_frame4 = customtkinter.CTkFrame(self.ResultsPage.buttonbar_frame, height=60, fg_color='#048B6B', border_color='#048B6B')
         self.ResultsPage.buttonbar_frame4.grid(row=1,column=4, columnspan=1, sticky="nesw")
-        self.ResultsPage.buttonbar_frame5 = customtkinter.CTkFrame(self.ResultsPage.buttonbar_frame, height=60, fg_color='#048B6B', border_color='#048B6B')
-        self.ResultsPage.buttonbar_frame5.grid(row=1,column=5, columnspan=1, sticky="nesw") 
+        #self.ResultsPage.buttonbar_frame5 = customtkinter.CTkFrame(self.ResultsPage.buttonbar_frame, height=60, fg_color='#048B6B', border_color='#048B6B')
+        #self.ResultsPage.buttonbar_frame5.grid(row=1,column=5, columnspan=1, sticky="nesw") 
 
         # Creating a frame to hold all of the content frames in the white space
         self.content_height=self.HEIGHT-self.ResultsPage.buttonbar_frame.cget("height")-self.ResultsPage.logo_frame.cget("height")-100
@@ -1167,13 +1236,13 @@ class App(customtkinter.CTk): # Creating a class for the app
         #self.ResultsPage.content_frame.grid_columnconfigure(1,weight=4)
 
         # Creating buttons
-        self.ResultsPage.save_project_button = customtkinter.CTkButton(self.ResultsPage.buttonbar_frame1, command=self.user_manual_button_event, text='Save Current Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
-        self.ResultsPage.save_project_button.pack(padx=5, pady=10)
-        self.ResultsPage.load_button = customtkinter.CTkButton(self.ResultsPage.buttonbar_frame2, command=self.load_project_button_event, text='Load Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        #self.ResultsPage.save_project_button = customtkinter.CTkButton(self.ResultsPage.buttonbar_frame1, command=self.user_manual_button_event, text='Save Current Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        #self.ResultsPage.save_project_button.pack(padx=5, pady=10)
+        self.ResultsPage.load_button = customtkinter.CTkButton(self.ResultsPage.buttonbar_frame1, command=self.load_project, text='Load Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.ResultsPage.load_button.pack(padx=5, pady=10)
-        self.ResultsPage.new_project_button = customtkinter.CTkButton(self.ResultsPage.buttonbar_frame3, command=self.changeToQuestion1, text='New Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        self.ResultsPage.new_project_button = customtkinter.CTkButton(self.ResultsPage.buttonbar_frame2, command=self.changeToQuestion1, text='New Project', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.ResultsPage.new_project_button.pack(padx=5, pady=10)
-        self.ResultsPage.user_manual_button = customtkinter.CTkButton(self.ResultsPage.buttonbar_frame4, command=self.user_manual_button_event, text='User Manual', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        self.ResultsPage.user_manual_button = customtkinter.CTkButton(self.ResultsPage.buttonbar_frame3, command=self.user_manual_button_event, text='User Manual', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.ResultsPage.user_manual_button.pack(padx=5, pady=10)
 
         # Contents on page
@@ -1220,14 +1289,14 @@ class App(customtkinter.CTk): # Creating a class for the app
         #Putting widgets inside the scrollable frame inside the first tab
         self.ResultsPage.results_tab.number_tag = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("1st Recommendation"), text="1", font=customtkinter.CTkFont(size=14, weight="bold"), text_color="white", corner_radius=500, fg_color="#048B6B", width=30, height=30)
         self.ResultsPage.results_tab.number_tag.grid(row=0, column=0, padx=5, pady=5)
-        self.ResultsPage.results_tab.results_techheading1 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("1st Recommendation"), text=self.top_results[0], font=customtkinter.CTkFont(size=24, weight="bold"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_techheading1 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("1st Recommendation"), text=self.extract_title(self.top_results[0]), font=customtkinter.CTkFont(size=24, weight="bold"), text_color="#08343C", anchor="w")
         self.ResultsPage.results_tab.results_techheading1.grid(row=0, column=1, sticky="nesw", padx=30, pady=10)
-        self.ResultsPage.results_tab.results_description1 = customtkinter.CTkLabel(self.ResultsPage.scrollframe1, text=self.tech_desc_dict[self.top_results[0]], font=customtkinter.CTkFont(size=14, weight="normal"), text_color="#08343C", anchor="w", justify="left", wraplength=1200)
-        self.ResultsPage.results_tab.results_description1.grid(row=1, column=0, sticky="nesw", padx=30, pady=10)
+        # self.ResultsPage.results_tab.results_description1 = customtkinter.CTkLabel(self.ResultsPage.scrollframe1, text=self.tech_desc_dict[self.top_results[0]], font=customtkinter.CTkFont(size=14, weight="normal"), text_color="#08343C", anchor="w", justify="left", wraplength=1200)
+        # self.ResultsPage.results_tab.results_description1.grid(row=1, column=0, sticky="nesw", padx=30, pady=10)
         self.ResultsPage.results_tab.results_charheading1 = customtkinter.CTkLabel(self.ResultsPage.scrollframe1, text="Characteristics", font=customtkinter.CTkFont(size=20, weight="bold"), text_color="#08343C", anchor="w")
-        self.ResultsPage.results_tab.results_charheading1.grid(row=2, column=0, sticky="nesw", padx=30, pady=10)
+        self.ResultsPage.results_tab.results_charheading1.grid(row=1, column=0, sticky="nesw", padx=30, pady=10)
         self.ResultsPage.results_tab.results_characteristics = customtkinter.CTkLabel(self.ResultsPage.scrollframe1, text=self.get_char_text(self.good_char, self.bad_char, self.top_results[0]), font=customtkinter.CTkFont(size=14, weight="normal"), text_color="#08343C", anchor="w", justify="left", fg_color = "#78BCAC", wraplength=1200)
-        self.ResultsPage.results_tab.results_characteristics.grid(row=3, column=0, sticky="nesw", padx=30, pady=10)
+        self.ResultsPage.results_tab.results_characteristics.grid(row=2, column=0, sticky="nesw", padx=30, pady=10)
 
         # Creating the second tab
         # Scrollable frame
@@ -1246,14 +1315,14 @@ class App(customtkinter.CTk): # Creating a class for the app
         #Putting widgets inside the scrollable frame inside the first tab
         self.ResultsPage.results_tab.number_tag = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("2nd Recommendation"), text="2", font=customtkinter.CTkFont(size=14, weight="bold"), text_color="white", corner_radius=500, fg_color="#048B6B", width=30, height=30)
         self.ResultsPage.results_tab.number_tag.grid(row=0, column=0, padx=5, pady=5)
-        self.ResultsPage.results_tab.results_techheading1 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("2nd Recommendation"), text=self.top_results[1], font=customtkinter.CTkFont(size=24, weight="bold"), text_color="#08343C", anchor="w")
-        self.ResultsPage.results_tab.results_techheading1.grid(row=0, column=1, sticky="nesw", padx=30, pady=10)
-        self.ResultsPage.results_tab.results_description1 = customtkinter.CTkLabel(self.ResultsPage.scrollframe2, text=self.tech_desc_dict[self.top_results[1]], font=customtkinter.CTkFont(size=14, weight="normal"), text_color="#08343C", anchor="w", justify="left", wraplength=1200)
-        self.ResultsPage.results_tab.results_description1.grid(row=1, column=0, sticky="nesw", padx=30, pady=10)
-        self.ResultsPage.results_tab.results_charheading1 = customtkinter.CTkLabel(self.ResultsPage.scrollframe2, text="Characteristics", font=customtkinter.CTkFont(size=20, weight="bold"), text_color="#08343C", anchor="w")
-        self.ResultsPage.results_tab.results_charheading1.grid(row=2, column=0, sticky="nesw", padx=30, pady=10)
+        self.ResultsPage.results_tab.results_techheading2 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("2nd Recommendation"), text=self.extract_title(self.top_results[1]), font=customtkinter.CTkFont(size=24, weight="bold"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_techheading2.grid(row=0, column=1, sticky="nesw", padx=30, pady=10)
+        # self.ResultsPage.results_tab.results_description2 = customtkinter.CTkLabel(self.ResultsPage.scrollframe2, text=self.tech_desc_dict[self.top_results[1]], font=customtkinter.CTkFont(size=14, weight="normal"), text_color="#08343C", anchor="w", justify="left", wraplength=1200)
+        # self.ResultsPage.results_tab.results_description2.grid(row=1, column=0, sticky="nesw", padx=30, pady=10)
+        self.ResultsPage.results_tab.results_charheading2 = customtkinter.CTkLabel(self.ResultsPage.scrollframe2, text="Characteristics", font=customtkinter.CTkFont(size=20, weight="bold"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_charheading2.grid(row=1, column=0, sticky="nesw", padx=30, pady=10)
         self.ResultsPage.results_tab.results_characteristics = customtkinter.CTkLabel(self.ResultsPage.scrollframe2, text=self.get_char_text(self.good_char, self.bad_char, self.top_results[1]), font=customtkinter.CTkFont(size=14, weight="normal"), text_color="#08343C", anchor="w", justify="left", fg_color = "#78BCAC", wraplength=1200)
-        self.ResultsPage.results_tab.results_characteristics.grid(row=3, column=0, sticky="nesw", padx=30, pady=10)
+        self.ResultsPage.results_tab.results_characteristics.grid(row=2, column=0, sticky="nesw", padx=30, pady=10)
 
         # Creating the third tab
         # Scrollable frame
@@ -1272,14 +1341,14 @@ class App(customtkinter.CTk): # Creating a class for the app
         #Putting widgets inside the scrollable frame inside the first tab
         self.ResultsPage.results_tab.number_tag = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("3rd Recommendation"), text="3", font=customtkinter.CTkFont(size=14, weight="bold"), text_color="white", corner_radius=500, fg_color="#048B6B", width=30, height=30)
         self.ResultsPage.results_tab.number_tag.grid(row=0, column=0, padx=5, pady=5)
-        self.ResultsPage.results_tab.results_techheading1 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("3rd Recommendation"), text=self.top_results[2], font=customtkinter.CTkFont(size=24, weight="bold"), text_color="#08343C", anchor="w")
-        self.ResultsPage.results_tab.results_techheading1.grid(row=0, column=1, sticky="nesw", padx=30, pady=10)
-        self.ResultsPage.results_tab.results_description1 = customtkinter.CTkLabel(self.ResultsPage.scrollframe3, text=self.tech_desc_dict[self.top_results[2]], font=customtkinter.CTkFont(size=14, weight="normal"), text_color="#08343C", anchor="w", justify="left", wraplength=1200)
-        self.ResultsPage.results_tab.results_description1.grid(row=1, column=0, sticky="nesw", padx=30, pady=10)
-        self.ResultsPage.results_tab.results_charheading1 = customtkinter.CTkLabel(self.ResultsPage.scrollframe3, text="Characteristics", font=customtkinter.CTkFont(size=20, weight="bold"), text_color="#08343C", anchor="w")
-        self.ResultsPage.results_tab.results_charheading1.grid(row=2, column=0, sticky="nesw", padx=30, pady=10)
+        self.ResultsPage.results_tab.results_techheading3 = customtkinter.CTkLabel(self.ResultsPage.results_tab.tab("3rd Recommendation"), text=self.extract_title(self.top_results[2]), font=customtkinter.CTkFont(size=24, weight="bold"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_techheading3.grid(row=0, column=1, sticky="nesw", padx=30, pady=10)
+        # self.ResultsPage.results_tab.results_description3 = customtkinter.CTkLabel(self.ResultsPage.scrollframe3, text=self.tech_desc_dict[self.top_results[2]], font=customtkinter.CTkFont(size=14, weight="normal"), text_color="#08343C", anchor="w", justify="left", wraplength=1200)
+        # self.ResultsPage.results_tab.results_description3.grid(row=1, column=0, sticky="nesw", padx=30, pady=10)
+        self.ResultsPage.results_tab.results_charheading3 = customtkinter.CTkLabel(self.ResultsPage.scrollframe3, text="Characteristics", font=customtkinter.CTkFont(size=20, weight="bold"), text_color="#08343C", anchor="w")
+        self.ResultsPage.results_tab.results_charheading3.grid(row=1, column=0, sticky="nesw", padx=30, pady=10)
         self.ResultsPage.results_tab.results_characteristics = customtkinter.CTkLabel(self.ResultsPage.scrollframe3, text=self.get_char_text(self.good_char, self.bad_char, self.top_results[2]), font=customtkinter.CTkFont(size=14, weight="normal"), text_color="#08343C", anchor="w", justify="left", fg_color = "#78BCAC", wraplength=1200)
-        self.ResultsPage.results_tab.results_characteristics.grid(row=3, column=0, sticky="nesw", padx=30, pady=10)
+        self.ResultsPage.results_tab.results_characteristics.grid(row=2, column=0, sticky="nesw", padx=30, pady=10)
 
         # Creating the frame to hold the save and print to docx. buttons
         self.ResultsPage.prevnext_frame = customtkinter.CTkFrame(self.ResultsPage.content_frame, fg_color="white", height=40)
@@ -1289,9 +1358,8 @@ class App(customtkinter.CTk): # Creating a class for the app
         self.ResultsPage.prevnext_frame.grid_rowconfigure(0,weight=1)
 
         # Creating Previous and next buttons at the bottom of the page
-        self.ResultsPage.save_button = customtkinter.CTkButton(self.ResultsPage.prevnext_frame, text='Save', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
+        self.ResultsPage.save_button = customtkinter.CTkButton(self.ResultsPage.prevnext_frame, command=self.save_project, text='Save', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.ResultsPage.save_button.grid(row=2, column=2)
-        self.ResultsPage.save_button.configure(state="disabled") # Disable the previous question button since we are on the first question
         self.ResultsPage.print_button = customtkinter.CTkButton(self.ResultsPage.prevnext_frame, command=self.print_to_docx, text='Print to .docx', fg_color="#08343C", border_color="#08343C", font=customtkinter.CTkFont(size=14, weight="bold"), height=40, hover_color="#a9c855")
         self.ResultsPage.print_button.grid(row=2, column=3)
         self.ResultsPage.print_button.configure(state="enabled") # Can't go to the next question until we put in a radio option
