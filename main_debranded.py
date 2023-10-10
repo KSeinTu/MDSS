@@ -1052,7 +1052,7 @@ class App(customtkinter.CTk): # Creating a class for the app
 
         print("printing to .docx file...")
         out_doc = Document()
-        out_doc.add_picture('img/DocCoverImg.jpg', width=Inches(1.25)) # Insert a cover image
+        out_doc.add_picture('img/DocCoverImg.jpg', width=Inches(6)) # Insert a cover image
         out_doc.add_heading(self.gen_desc_dict["Report Title"], 0)
         out_doc.add_page_break() # Start the Text and headings on the next page
         # Introduction
